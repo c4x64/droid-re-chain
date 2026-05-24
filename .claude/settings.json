@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "droid-re-chain": {
+      "command": "python3",
+      "args": ["-m", "src.server"],
+      "env": {
+        "ANDROID_NDK_HOME": "${ANDROID_NDK_HOME:-}"
+      }
+    }
+  }
+}

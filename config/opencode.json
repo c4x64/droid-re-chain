@@ -4,12 +4,8 @@
   "mcp": {
     "droid-re-chain": {
       "type": "local",
-      "command": ["python3", "-m", "src.server"],
-      "enabled": true,
-      "env": {
-        "ANDROID_NDK_HOME": "/opt/homebrew/share/android-commandlinetools/ndk/25.2.9519653",
-        "ANDROID_SDK_ROOT": "/opt/homebrew/share/android-commandlinetools"
-      }
+      "command": ["bash", "mcp-entrypoint.sh"],
+      "enabled": true
     }
   },
   "skills": {

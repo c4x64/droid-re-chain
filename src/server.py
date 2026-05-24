@@ -1,9 +1,16 @@
 """droid-re-chain MCP Server — modular registry.
 Imports and registers all 8 tool modules with FastMCP.
 Total: 120 tools across ADB, NDK, il2cpp, hook, trap, mem, frida, and apk categories.
+
+Usage:
+  python3 -m src.server              # stdio mode (default, for MCP hosts)
+  python3 -m src.server --sse        # SSE mode (for browser/dev tools)
+  python3 -m src.server --sse --port 8080  # custom port
 """
 import os
+import sys
 import json
+import argparse
 from mcp.server.fastmcp import FastMCP
 from src.shared import LIBS_DIR, LOGS_DIR, PROJECT_ROOT, HOST_OS, NDK_CLANG
 from src.shared import _adb_run, _adb_shell, ADB_BINARY
@@ -38,7 +45,14 @@ def health_check() -> str:
                         "host_os": HOST_OS}, indent=2)
 
 def main():
-    mcp.run()
+    parser = argparse.ArgumentParser(prog="droid-re-chain")
+    parser.add_argument("--sse", action="store_true", help="Run in SSE mode instead of stdio")
+    parser.add_argument("--port", type=int, default=8000, help="Port for SSE mode (default: 8000)")
+    args = parser.parse_args()
+    if args.sse:
+        mcp.run(transport="sse", port=args.port)
+    else:
+        mcp.run(transport="stdio")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "droid-re-chain": {
+      "type": "local",
+      "command": "python3",
+      "args": ["-m", "src.server"],
+      "env": {
+        "ANDROID_NDK_HOME": "${ANDROID_NDK_HOME:-/opt/homebrew/share/android-commandlinetools/ndk/25.2.9519653}",
+        "PYTHONPATH": "${PROJECT_ROOT:-.}"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

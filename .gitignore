@@ -14,6 +14,7 @@ patches/
 apk_work/
 frida_scripts/
 .opencode/
+.env
 *.egg-info/
 dist/
 build/
