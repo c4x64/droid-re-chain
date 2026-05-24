@@ -3,8 +3,8 @@ set -euo pipefail
 
 echo "=== droid-re-chain Setup (Unix) ==="
 
-# 1. Python deps
-pip install -r requirements.txt
+# 1. Python deps (--break-system-packages for Debian 12+/Ubuntu 23+)
+pip install -r requirements.txt --break-system-packages 2>/dev/null || pip install -r requirements.txt
 
 # 2. Verify ADB
 if ! command -v adb &>/dev/null; then

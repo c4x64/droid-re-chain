@@ -33,9 +33,6 @@ Java.perform(function() {
     print(f"Example hook script:\n{script}")
     print()
     print("Available Frida tools:")
-    for name, _ in sorted(vars().items()):
-        if callable(name) or "@tool" in str(type(name)):
-            pass
     print("  frida_check_installed, frida_list_processes, frida_attach")
     print("  frida_eval_script, frida_trace_method, frida_dump_memory")
     print("  frida_write_memory, frida_spawn, frida_detach")

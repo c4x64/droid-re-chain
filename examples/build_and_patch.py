@@ -1,6 +1,7 @@
 """Example: Build NDK module, push to device, and patch a target offset."""
 import sys
 import time
+import subprocess
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -21,7 +22,6 @@ def main():
     cmd = [NDK_CLANG, "-shared", "-fPIC", "-O2", "-Wall", "-Werror",
            "-I", str(src_main.parent.parent / "include"),
            str(src_main), "-o", str(lib_out), "-llog", "-ldl"]
-    import subprocess
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
     if r.returncode != 0:
         print("Build failed:", r.stderr)

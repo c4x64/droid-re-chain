@@ -145,9 +145,10 @@ class CrashTrapDaemon:
             if m:
                 ctx.backtrace.append({"frame": m.group(1), "type": m.group(2), "address": m.group(3), "library": m.group(4)})
                 if not ctx.fault_library: ctx.fault_library = m.group(4)
+        if not ctx.signal:
+            m = re.search(r"(SIGSEGV|SIGILL|SIGABRT|SIGFPE)", text)
+            if m: ctx.signal = m.group(1)
         if ctx.backtrace or ctx.signal: return ctx
-        m = re.search(r"(SIGSEGV|SIGILL|SIGABRT|SIGFPE)", text)
-        if m: ctx.signal = m.group(1); return ctx
         return None
 
     def get_crashes(self, timeout: float = 1.0) -> list:
