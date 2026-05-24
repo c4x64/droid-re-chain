@@ -20,26 +20,34 @@ Use when the task involves any of:
 
 | Tool | Purpose |
 |------|---------|
+| `adb_connect` / `adb_disconnect` | Connect/disconnect to emulator loopback |
 | `adb_devices` | List connected devices |
-| `adb_shell` / `adb_push_payload` | Device control and payload deployment |
-| `adb_restart_package` | Force-stop + relaunch a package |
-| `build_mod` / `ndk_compile_project` / `clean_build` | NDK compilation pipeline |
-| `deploy_mod` | Build + push in one atomic step |
-| `analyze_crash` / `extract_crash_offsets` / `suggest_patch_target` | Logcat crash analysis |
-| `pull_il2cpp` | Extract il2cpp from target APK |
+| `adb_shell_cmd` / `adb_push_binary` / `adb_pull_data` | Device control and payload deployment |
+| `adb_install_apk` / `adb_start_activity` / `adb_force_stop` | App lifecycle management |
+| `adb_restart_package` (combo) | Force-stop + relaunch a package |
+| `ndk_build_module` / `ndk_build_clean` | NDK compilation pipeline |
+| `cmake_generate_config` / `cmake_compile_target` | CMake build system |
+| `verify_binary_architecture` | ELF header ARM64 verification |
+| `logcat_clear_buffer` / `logcat_dump_stack_trace` | Logcat management |
+| `logcat_spawn_crash_trap` | Background crash daemon (SIGSEGV/SIGILL/SIGABRT) |
+| `analyze_crash_report` / `extract_il2cpp_offsets` | Crash parsing |
+| `suggest_patch_strategy` | AI-driven patch suggestion |
+| `build_deploy_loop` | Full auto cycle (build→push→restart→logcat→analyze→repeat) |
+| `deploy_payload_with_restart` | Push + restart in one step |
+| `device_info` / `project_status` | Environment introspection |
 
 ## Workflow
 
-1. **Pull** il2cpp from target → analyze exported symbols
+1. **Pull** il2cpp from target with `adb_pull_data` → analyze exported symbols
 2. **Write** hooks in `src/main.cpp` using `include/il2cpp.h` utilities
-3. **Build** with `build_mod` → fix compilation errors
-4. **Deploy** with `deploy_mod` → pushes to `/data/local/tmp/libmod.so`
-5. **Restart** target package with `adb_restart_package`
-6. **Logcat** with `adb_logcat(filter="REChainMod:S")` → trap crashes
-7. **Analyze** with `analyze_crash` → extract offset → **patch** → repeat
+3. **Build** with `ndk_build_module` → parse JSON errors → fix
+4. **Verify** with `verify_binary_architecture` → confirm ARM64
+5. **Deploy** with `deploy_payload_with_restart` → pushes `.so` + restarts target
+6. **Trap** with `logcat_spawn_crash_trap(action="start")` + `action="fetch"` → extract offsets
+7. **Analyze** with `analyze_crash_report` → `suggest_patch_strategy` → **patch** → repeat
 
 ## Files
 
-- `src/main.cpp` — hook implementation (edit this)
+- `src/main.cpp` — hook implementation (EDIT THIS)
 - `include/il2cpp.h` — **READ ONLY**, do not modify
 - `Android.mk` — legacy NDK build file

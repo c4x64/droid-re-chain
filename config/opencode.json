@@ -3,7 +3,7 @@
   "mcp": {
     "droid-re-chain": {
       "type": "local",
-      "command": ["python3", "-m", "src.server"],
+      "command": ["python3", "src/server.py"],
       "enabled": true,
       "env": {
         "ANDROID_NDK_HOME": "/opt/homebrew/share/android-commandlinetools/ndk/25.2.9519653",
