@@ -1,85 +1,100 @@
 ---
 name: droid-re-chain
-description: Use ONLY for Android reverse engineering tasks involving NDK compilation, ADB device control, il2cpp runtime analysis, or automated crash-log-driven patch iteration on arm64 Android emulators. Do NOT use for general Android development.
+description: Use ONLY for Android reverse engineering tasks involving NDK compilation, ADB device control, il2cpp runtime analysis, Frida hooking, crash-log-driven patch iteration, or APK manipulation on arm64 Android emulators. Do NOT use for general Android development.
 ---
 
 # droid-re-chain MCP Server
 
-Headless AI-driven Android reverse engineering automation pipeline — 90 tools across 6 categories.
+Headless AI-driven Android reverse engineering automation pipeline — **120 tools across 8 categories**.
 
 ## When to use
 
 Use when the task involves any of:
 
 - **NDK compilation**: Building `libmod.so` from `src/main.cpp` using the arm64 NDK toolchain
-- **ADB device management**: Pushing/pulling files, executing shell commands, restarting packages
+- **ADB device management**: Pushing/pulling files, executing shell commands, managing packages
 - **Il2cpp runtime analysis**: Scanning method pointers, analyzing Unity/il2cpp binaries
-- **Crash-driven iteration**: Parsing logcat/tombstone crashes, extracting fault offsets, suggesting patch targets
+- **Crash-driven iteration**: Parsing logcat/tombstone crashes, extracting fault offsets, suggesting patches
 - **Memory analysis**: Inspecting process maps, scanning patterns, pointer chasing
 - **Hook generation**: Dobby stubs, vtable swizzle, trampoline verification
+- **Frida instrumentation**: Attach, spawn, stalker trace, memory read/write, Java hooks
+- **APK manipulation**: Decompile, recompile, sign, install, detect protections, SSL pinning
 
-## 6 Tool Categories (90 tools)
+## 8 Tool Categories (120 tools)
 
-### 1. ADB & Emulator (15 tools) — `adb_*`
+### 1. ADB & Emulator (16 tools)
 `adb_connect`, `adb_disconnect`, `adb_device_info`, `adb_devices`,
-`adb_list_packages`, `adb_current_app`, `adb_force_stop`, `adb_clear_data`,
-`adb_install_apk`, `adb_uninstall_package`, `adb_grant_permissions`,
-`adb_file_push`, `adb_file_pull`, `adb_file_chmod`, `adb_file_remove`, `adb_mkdir`
+`adb_list_packages`, `adb_install`, `adb_uninstall`, `adb_start_app`,
+`adb_stop_app`, `adb_restart_app`, `adb_clear_app_data`, `adb_screencap`,
+`adb_input_tap`, `adb_input_swipe`, `adb_input_text`, `adb_reboot`
 
-### 2. NDK & Compilation (15 tools) — `ndk_*`, `cmake_*`, `verify_*`, `strip_*`
+### 2. NDK & Compilation (16 tools)
 `ndk_build_clean`, `ndk_build_module`, `ndk_build_debug`, `ndk_build_release`,
-`cmake_generate_config`, `cmake_compile_target`, `verify_elf_header`,
-`strip_symbols`, `parse_compiler_errors`, `patch_makefile`,
-`check_include_paths`, `set_compiler_flags`, `get_ndk_version`,
-`audit_link_dependencies`, `generate_standalone_toolchain`
+`ndk_build_ccache`, `cmake_generate_config`, `cmake_compile_target`,
+`verify_elf_header`, `verify_elf_symbols`, `strip_symbols`,
+`parse_compiler_errors`, `patch_makefile`, `check_include_paths`,
+`set_compiler_flags`, `get_ndk_version`, `audit_link_dependencies`
 
-### 3. Il2cpp Parsing (15 tools) — `il2cpp_*`
-`il2cpp_run_dumper`, `il2cpp_load_json`, `il2cpp_find_class`,
-`il2cpp_get_method_rva`, `il2cpp_get_fields`, `il2cpp_get_method_params`,
-`il2cpp_search_methods`, `il2cpp_generate_mock_header`,
-`il2cpp_extract_string_literals`, `il2cpp_diff_metadata`,
-`il2cpp_get_nested_classes`, `il2cpp_validate_method_signature`,
-`il2cpp_export_type_definitions`, `il2cpp_find_generic_instances`,
-`il2cpp_calculate_struct_padding`
+### 3. Il2cpp Parsing (15 tools)
+`il2cpp_list_assemblies`, `il2cpp_find_class`, `il2cpp_find_method`,
+`il2cpp_dump_class_methods`, `il2cpp_get_method_pointer`,
+`il2cpp_string_new`, `il2cpp_array_new`, `il2cpp_object_new`,
+`il2cpp_invoke_method`, `il2cpp_field_get_value`, `il2cpp_field_set_value`,
+`il2cpp_get_nested_types`, `il2cpp_parse_metadata_regex`,
+`il2cpp_profiler_export`, `il2cpp_struct_size`
 
-### 4. Hooking & Patching (15 tools) — `hook_*`
-`hook_generate_dobby_stub`, `hook_generate_patch_payload`,
-`hook_calculate_absolute_address`, `hook_inject_zygisk_template`,
-`hook_inject_xposed_bridge`, `hook_generate_dlopen_wrapper`,
-`hook_create_function_ptr_cast`, `hook_write_patch_map`,
-`hook_obfuscate_string`, `hook_verify_trampoline_size`,
-`hook_generate_multi_target`, `hook_add_conditional_gate`,
-`hook_generate_vtable_swizzle`, `hook_check_calling_convention`,
-`hook_generate_vtable_noop_patch`
+### 4. Hooking & Patching (15 tools)
+`hook_generate_template`, `hook_arm64_inline`, `hook_arm64_plt`,
+`hook_arm64_got`, `hook_inject_shared_library`, `hook_dlopen_intercept`,
+`hook_restore_original`, `hook_list_active`, `hook_export_patch_plan`,
+`hook_generate_nop_sled`, `hook_ret_sled`, `hook_trampoline_gen`,
+`hook_il2cpp_method`, `hook_check_permissions`, `hook_set_debuggable`
 
-### 5. Runtime Trapping (15 tools) — `trap_*`
-`trap_clear_buffers`, `trap_start_stream`, `trap_stop_stream`,
-`trap_set_filter`, `trap_scan_crash_signals`, `trap_extract_pc_register`,
-`trap_parse_stack_trace`, `trap_isolate_fault_address`,
-`trap_map_fault_to_rva`, `trap_dump_native_heap`, `trap_monitor_anr`,
-`trap_capture_tombstone`, `trap_log_custom_payload`, `trap_get_thread_list`,
-`trap_detect_anticheat_log`
+### 5. Runtime Trapping (15 tools)
+`trap_start_daemon`, `trap_stop_daemon`, `trap_get_crashes`,
+`trap_set_filter`, `trap_analyze_crash`, `trap_suggest_patch`,
+`trap_clear_logcat`, `trap_dump_logcat`, `trap_watch_signal`,
+`trap_tombstone_export`, `trap_continuous_monitor`,
+`trap_exception_hook`, `trap_set_breakpoint`, `trap_unwind_stack`,
+`trap_check_seccomp`
 
-### 6. Memory Analysis (15 tools) — `mem_*`
-`mem_get_process_maps`, `mem_find_base_address`, `mem_read_bytes`,
-`mem_write_bytes`, `mem_scan_pattern`, `mem_dump_segment`,
-`mem_check_protection`, `mem_verify_checksum`, `mem_monitor_value_change`,
-`mem_locate_pointer_chains`, `mem_get_region_size`,
-`mem_detect_hook_overwrites`, `mem_alloc_sandbox_page`,
-`mem_free_sandbox_page`, `mem_audit_integrity_loops`
+### 6. Memory Analysis (15 tools)
+`mem_read_region`, `mem_write_region`, `mem_scan_pattern`,
+`mem_dump_process_maps`, `mem_get_base_address`, `mem_protect_region`,
+`mem_alloc`, `mem_free`, `mem_hash_region`, `mem_dump_to_file`,
+`mem_compare_regions`, `mem_find_library_base`, `mem_list_libraries`,
+`mem_export_proc_maps`, `mem_check_rwx`
 
-## Workflow
+### 7. Frida Integration (15 tools)
+`frida_check_installed`, `frida_start_server`, `frida_list_processes`,
+`frida_attach`, `frida_eval_script`, `frida_trace_method`,
+`frida_dump_memory`, `frida_write_memory`, `frida_spawn`, `frida_detach`,
+`frida_stalker_trace`, `frida_offset_to_absolute`,
+`frida_find_module_address`, `frida_enumerate_classes`,
+`frida_hook_instance_method`
 
-1. **Pull** il2cpp from target → analyze exported symbols with `il2cpp_*` tools
-2. **Write** hooks in `src/main.cpp` using `include/il2cpp.h` utilities
-3. **Build** with `ndk_build_module` → parse JSON errors → fix
-4. **Verify** with `verify_elf_header` → confirm ARM64
-5. **Deploy** with `adb_file_push` + `adb_start_activity` → push `.so` + restart
-6. **Trap** with `trap_start_stream` + `trap_scan_crash_signals` → extract offsets
-7. **Analyze** with `trap_parse_stack_trace` → `hook_generate_patch_payload` → **patch** → repeat
+### 8. APK Manipulation (15 tools)
+`apk_pull_from_device`, `apk_extract`, `apk_extract_native_libs`,
+`apk_decompile_smali`, `apk_recompile`, `apk_sign`, `apk_install_patched`,
+`patch_manifest_debuggable`, `detect_apk_protection`,
+`apk_verify_signature`, `apk_get_version`, `diff_apks`,
+`search_java_source`, `detect_ssl_pinning`
+
+### 9. Server Utility (1 tool)
+`health_check`
 
 ## Files
 
 - `src/main.cpp` — hook implementation (EDIT THIS)
 - `include/il2cpp.h` — **READ ONLY**, do not modify
+- `include/logging.h` — thread-safe logging macros, BUILD_HASH, null guards
 - `Android.mk` / `Application.mk` — NDK build files
+- `scripts/build_ndk.py` — advanced builder with ccache/LTO/sanitizers/ELF verify
+
+## Important constraints
+
+- Every source file must stay under 1,000 lines
+- All ADB commands use `subprocess.run` with arg lists (never `shell=True`)
+- `include/il2cpp.h` is READ ONLY — do not edit
+- NDK toolchain read from `$ANDROID_NDK_HOME`, falls back to common install paths
+- The project auto-detects macOS/Linux/Windows host OS for cross-platform compatibility

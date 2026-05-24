@@ -273,6 +273,56 @@ def register(mcp):
         return f"NDK not found at {NDK_BASE}"
 
     @mcp.tool()
+    def ndk_build_ccache(source: str = "main.cpp", output: str = "libmod_cc.so") -> str:
+        """Build with CCache acceleration. Args: source (in src/), output (in libs/)."""
+        import shutil
+        ccache_bin = shutil.which("ccache")
+        if not ccache_bin:
+            return "ccache not installed. Install it: brew install ccache / apt install ccache"
+        tc = _check_ndk_toolchain()
+        if tc: return tc
+        src_path = SRC_DIR / source
+        if not src_path.exists(): return f"ERROR: source not found at {src_path}"
+        out_path = LIBS_DIR / output
+        cmd = [ccache_bin, NDK_CLANG, "-target", "aarch64-linux-android21",
+               "--sysroot", NDK_SYSROOT, "-I", str(INCLUDE_DIR),
+               "-fPIC", "-shared", "-O2", "-fvisibility=hidden",
+               "-flto=thin", "-Wall", "-Wextra",
+               "-o", str(out_path), str(src_path), "-llog", "-ldl"]
+        env = os.environ.copy()
+        env["CCACHE_SLOPPINESS"] = "time_macros,pch_defines"
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=120, env=env)
+        except subprocess.TimeoutExpired:
+            return json.dumps({"status": "timeout"})
+        if r.returncode != 0: return _parse_ndk_errors(r.stderr, r.stdout)
+        return json.dumps({"status": "success", "output": str(out_path),
+                           "size": out_path.stat().st_size, "ccache": True})
+
+    @mcp.tool()
+    def verify_elf_symbols(binary_path: str = "") -> str:
+        """Run nm on built .so to count exported vs undefined symbols. Args: binary_path."""
+        if not binary_path:
+            for c in [LIBS_DIR / "libmod_stripped.so", LIBS_DIR / "libmod.so"]:
+                if c.exists(): binary_path = str(c); break
+        if not binary_path: return "ERROR: no binary found"
+        try:
+            r = subprocess.run(["nm", "-D", binary_path], capture_output=True, text=True, timeout=15)
+            if r.returncode != 0:
+                return f"nm failed: {r.stderr.strip()[:300]}"
+            lines = r.stdout.strip().splitlines()
+            total = len(lines)
+            undefined = sum(1 for l in lines if " U " in l)
+            defined = total - undefined
+            exports = [l.strip() for l in lines if " T " in l][:20]
+            return json.dumps({"total_symbols": total, "defined": defined,
+                               "undefined": undefined,
+                               "exported_functions": exports[:10],
+                               "binary": binary_path}, indent=2)
+        except FileNotFoundError:
+            return "nm not found. Install binutils."
+
+    @mcp.tool()
     def audit_link_dependencies() -> str:
         """Validate whether libmod.so correctly links against required libraries."""
         libmod = LIBS_DIR / "libmod.so"
