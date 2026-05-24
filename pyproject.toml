@@ -1,0 +1,12 @@
+[project]
+name = "droid-re-chain"
+version = "0.1.0"
+description = "Headless AI-driven Android reverse engineering automation pipeline"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.backends._legacy:_Backend"

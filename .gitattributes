@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.py text
+*.cpp text
+*.h text
+*.md text
+*.json text
+*.mk text
+*.so binary
+*.png binary
