@@ -14,12 +14,7 @@ from typing import Optional
 from dataclasses import dataclass, field
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP(
-    "droid-re-chain-monolith",
-    description="Headless AI-driven Android reverse engineering automation pipeline. "
-                "Monolithic MCP server consolidating ADB device control, NDK cross-compilation, "
-                "il2cpp runtime analysis, and continuous logcat-driven crash trapping.",
-)
+mcp = FastMCP("droid-re-chain-monolith")
 
 ADB_BINARY = "adb"
 ADB_HOST = "127.0.0.1"
@@ -957,6 +952,8 @@ def project_status() -> str:
             dirs.remove(".git")
         if "__pycache__" in dirs:
             dirs.remove("__pycache__")
+        if "node_modules" in dirs:
+            dirs.remove("node_modules")
         rel = os.path.relpath(root, PROJECT_ROOT)
         if rel == ".":
             for f in sorted(files):
@@ -967,30 +964,49 @@ def project_status() -> str:
 
     artifacts = []
     for f in sorted(LIBS_DIR.glob("*")):
-        artifacts.append(f"{f.name} ({f.stat().st_size} bytes)")
+        mtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(f.stat().st_mtime))
+        artifacts.append(f"{f.name} ({f.stat().st_size} bytes, modified {mtime})")
 
     ndk_ok = os.path.isfile(NDK_CLANG)
+    ndk_version = "25.2.9519653"
     adb_ok = False
+    adb_version = "unknown"
     try:
-        subprocess.run([ADB_BINARY, "version"], capture_output=True, timeout=5)
+        r = subprocess.run([ADB_BINARY, "version"], capture_output=True, text=True, timeout=5)
         adb_ok = True
+        adb_version = r.stdout.splitlines()[0] if r.stdout else "unknown"
     except Exception:
         pass
+
+    hooks_available = 0
+    if os.path.exists(INCLUDE_DIR / "il2cpp.h"):
+        with open(INCLUDE_DIR / "il2cpp.h") as f:
+            hooks_available = sum(1 for line in f if "il2cpp_" in line and "fn" in line and "//" not in line)
+
+    patch_count = len(list(PATCHES_DIR.glob("*.py"))) + len(list(PATCHES_DIR.glob("*.patch")))
+    log_count = len(list(LOGS_DIR.glob("*.log")))
 
     return (
         f"Project: {PROJECT_ROOT.name}\n"
         f"Root: {PROJECT_ROOT}\n"
+        f"Workspace: {os.path.getsize(str(PROJECT_ROOT))} bytes across {len(structure)} paths\n"
         f"\n--- Toolchain ---\n"
-        f"NDK ({'OK' if ndk_ok else 'MISSING'}): {NDK_BASE}\n"
-        f"ADB ({'OK' if adb_ok else 'MISSING'})\n"
-        f"Clang: {NDK_CLANG}\n"
+        f"NDK ({'OK' if ndk_ok else 'MISSING'}): {NDK_BASE} (v{ndk_version})\n"
+        f"ADB ({'OK' if adb_ok else 'MISSING'}): {adb_version}\n"
+        f"Arm64 Clang: {NDK_CLANG}\n"
+        f"Arm64 Strip: {NDK_STRIP}\n"
+        f"Sysroot: {NDK_SYSROOT}\n"
         f"\n--- Source Files ---\n"
         + "\n".join(structure) +
         f"\n\n--- Build Artifacts ---\n" +
         ("\n".join(artifacts) if artifacts else "(none)") +
-        f"\n\n--- Config ---\n"
+        f"\n\n--- Patches & Logs ---\n" +
+        f"Patches available: {patch_count}\n" +
+        f"Log files stored: {log_count}\n" +
+        f"\n--- Config ---\n"
         f"ADB target: {ADB_HOST}:{ADB_PORT}\n"
-        f"Module output: {LIBS_DIR}"
+        f"Module output: {LIBS_DIR}\n"
+        f"il2cpp API functions available: {hooks_available}"
     )
 
 def main():
