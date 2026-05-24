@@ -1,0 +1,17 @@
+*.o
+*.so
+*.ko
+*.a
+*.d
+*.bak
+*.log
+logs/
+libs/
+obj/
+local.properties
+.gradle/
+build/
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
