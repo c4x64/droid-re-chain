@@ -17,4 +17,4 @@ lint:
 	ruff check src/ || echo "install ruff: pip install ruff"
 
 run:
-	python3 src/server.py
+	python3 -m src.server
