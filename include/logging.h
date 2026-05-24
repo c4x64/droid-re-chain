@@ -4,9 +4,7 @@
 #include <android/log.h>
 #include <pthread.h>
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <stdarg.h>
 
 #define LOG_TAG "REChainMod"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)

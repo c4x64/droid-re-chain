@@ -1,90 +1,146 @@
 # API Reference
 
-## Tools (120 total)
+Auto-generated from 122 registered tools.
+Host: darwin
 
-### ADB & Emulator (`tools_adb.py` — 16 tools)
-- `adb_connect`, `adb_disconnect`, `adb_device_info`, `adb_devices`
-- `adb_list_packages`, `adb_install`, `adb_uninstall`, `adb_start_app`
-- `adb_stop_app`, `adb_restart_app`, `adb_clear_app_data`, `adb_screencap`
-- `adb_input_tap`, `adb_input_swipe`, `adb_input_text`, `adb_reboot`
+## Tools
 
-### NDK & Compilation (`tools_ndk.py` — 16 tools)
-- `ndk_build_module`, `ndk_build_debug`, `ndk_build_release`, `ndk_build_ccache`
-- `ndk_build_clean`, `cmake_generate_config`, `cmake_compile_target`
-- `verify_elf_header`, `verify_elf_symbols`, `strip_symbols`
-- `parse_compiler_errors`, `patch_makefile`, `check_include_paths`
-- `set_compiler_flags`, `get_ndk_version`, `audit_link_dependencies`
+### ADB & Emulator (16 tools)
+- `adb_clear_data` — src/tools_adb.py
+- `adb_connect` — src/tools_adb.py
+- `adb_current_app` — src/tools_adb.py
+- `adb_device_info` — src/tools_adb.py
+- `adb_devices` — src/tools_adb.py
+- `adb_disconnect` — src/tools_adb.py
+- `adb_file_chmod` — src/tools_adb.py
+- `adb_file_pull` — src/tools_adb.py
+- `adb_file_push` — src/tools_adb.py
+- `adb_file_remove` — src/tools_adb.py
+- `adb_force_stop` — src/tools_adb.py
+- `adb_grant_permissions` — src/tools_adb.py
+- `adb_install_apk` — src/tools_adb.py
+- `adb_list_packages` — src/tools_adb.py
+- `adb_mkdir` — src/tools_adb.py
+- `adb_uninstall_package` — src/tools_adb.py
 
-### il2cpp & Metadata (`tools_il2cpp.py` — 15 tools)
-- `il2cpp_list_assemblies`, `il2cpp_find_class`, `il2cpp_find_method`
-- `il2cpp_dump_class_methods`, `il2cpp_get_method_pointer`
-- `il2cpp_string_new`, `il2cpp_array_new`, `il2cpp_object_new`
-- `il2cpp_invoke_method`, `il2cpp_field_get_value`, `il2cpp_field_set_value`
-- `il2cpp_get_nested_types`, `il2cpp_parse_metadata_regex`
-- `il2cpp_profiler_export`, `il2cpp_struct_size`
+### APK Handling (13 tools)
+- `apk_decompile_smali` — src/tools_apk.py
+- `apk_extract` — src/tools_apk.py
+- `apk_extract_native_libs` — src/tools_apk.py
+- `apk_get_version` — src/tools_apk.py
+- `apk_install_patched` — src/tools_apk.py
+- `apk_pull_from_device` — src/tools_apk.py
+- `apk_recompile` — src/tools_apk.py
+- `apk_sign` — src/tools_apk.py
+- `apk_verify_signature` — src/tools_apk.py
+- `detect_apk_protection` — src/tools_apk.py
+- `detect_ssl_pinning` — src/tools_apk.py
+- `diff_apks` — src/tools_apk.py
+- `search_java_source` — src/tools_apk.py
 
-### Hooking & Patching (`tools_hook.py` — 15 tools)
-- `hook_generate_template`, `hook_arm64_inline`, `hook_arm64_plt`
-- `hook_arm64_got`, `hook_inject_shared_library`, `hook_dlopen_intercept`
-- `hook_restore_original`, `hook_list_active`, `hook_export_patch_plan`
-- `hook_generate_nop_sled`, `hook_ret_sled`, `hook_trampoline_gen`
-- `hook_il2cpp_method`, `hook_check_permissions`, `hook_set_debuggable`
+### Crash Trapping (15 tools)
+- `trap_capture_tombstone` — src/tools_trap.py
+- `trap_clear_buffers` — src/tools_trap.py
+- `trap_detect_anticheat_log` — src/tools_trap.py
+- `trap_dump_native_heap` — src/tools_trap.py
+- `trap_extract_pc_register` — src/tools_trap.py
+- `trap_get_thread_list` — src/tools_trap.py
+- `trap_isolate_fault_address` — src/tools_trap.py
+- `trap_log_custom_payload` — src/tools_trap.py
+- `trap_map_fault_to_rva` — src/tools_trap.py
+- `trap_monitor_anr` — src/tools_trap.py
+- `trap_parse_stack_trace` — src/tools_trap.py
+- `trap_scan_crash_signals` — src/tools_trap.py
+- `trap_set_filter` — src/tools_trap.py
+- `trap_start_stream` — src/tools_trap.py
+- `trap_stop_stream` — src/tools_trap.py
 
-### Crash Trapping (`tools_trap.py` — 15 tools)
-- `trap_start_daemon`, `trap_stop_daemon`, `trap_get_crashes`
-- `trap_set_filter`, `trap_analyze_crash`, `trap_suggest_patch`
-- `trap_clear_logcat`, `trap_dump_logcat`, `trap_watch_signal`
-- `trap_tombstone_export`, `trap_continuous_monitor`
-- `trap_exception_hook`, `trap_set_breakpoint`, `trap_unwind_stack`
-- `trap_check_seccomp`
+### Frida Integration (15 tools)
+- `frida_attach` — src/tools_frida.py
+- `frida_check_installed` — src/tools_frida.py
+- `frida_detach` — src/tools_frida.py
+- `frida_dump_memory` — src/tools_frida.py
+- `frida_enumerate_classes` — src/tools_frida.py
+- `frida_eval_script` — src/tools_frida.py
+- `frida_find_module_address` — src/tools_frida.py
+- `frida_hook_instance_method` — src/tools_frida.py
+- `frida_list_processes` — src/tools_frida.py
+- `frida_offset_to_absolute` — src/tools_frida.py
+- `frida_spawn` — src/tools_frida.py
+- `frida_stalker_trace` — src/tools_frida.py
+- `frida_start_server` — src/tools_frida.py
+- `frida_trace_method` — src/tools_frida.py
+- `frida_write_memory` — src/tools_frida.py
 
-### Memory & Process (`tools_mem.py` — 15 tools)
-- `mem_read_region`, `mem_write_region`, `mem_scan_pattern`
-- `mem_dump_process_maps`, `mem_get_base_address`, `mem_protect_region`
-- `mem_alloc`, `mem_free`, `mem_hash_region`
-- `mem_dump_to_file`, `mem_compare_regions`, `mem_find_library_base`
-- `mem_list_libraries`, `mem_export_proc_maps`, `mem_check_rwx`
+### Hooking & Patching (15 tools)
+- `hook_add_conditional_gate` — src/tools_hook.py
+- `hook_calculate_absolute_address` — src/tools_hook.py
+- `hook_check_calling_convention` — src/tools_hook.py
+- `hook_create_function_ptr_cast` — src/tools_hook.py
+- `hook_generate_dlopen_wrapper` — src/tools_hook.py
+- `hook_generate_dobby_stub` — src/tools_hook.py
+- `hook_generate_multi_target` — src/tools_hook.py
+- `hook_generate_patch_payload` — src/tools_hook.py
+- `hook_generate_vtable_noop_patch` — src/tools_hook.py
+- `hook_generate_vtable_swizzle` — src/tools_hook.py
+- `hook_inject_xposed_bridge` — src/tools_hook.py
+- `hook_inject_zygisk_template` — src/tools_hook.py
+- `hook_obfuscate_string` — src/tools_hook.py
+- `hook_verify_trampoline_size` — src/tools_hook.py
+- `hook_write_patch_map` — src/tools_hook.py
 
-### Frida Integration (`tools_frida.py` — 15 tools)
-- `frida_check_installed`, `frida_start_server`, `frida_list_processes`
-- `frida_attach`, `frida_eval_script`, `frida_trace_method`
-- `frida_dump_memory`, `frida_write_memory`, `frida_spawn`
-- `frida_detach`, `frida_stalker_trace`, `frida_offset_to_absolute`
-- `frida_find_module_address`, `frida_enumerate_classes`
-- `frida_hook_instance_method`
+### Memory & Process (15 tools)
+- `mem_alloc_sandbox_page` — src/tools_mem.py
+- `mem_audit_integrity_loops` — src/tools_mem.py
+- `mem_check_protection` — src/tools_mem.py
+- `mem_detect_hook_overwrites` — src/tools_mem.py
+- `mem_dump_segment` — src/tools_mem.py
+- `mem_find_base_address` — src/tools_mem.py
+- `mem_free_sandbox_page` — src/tools_mem.py
+- `mem_get_process_maps` — src/tools_mem.py
+- `mem_get_region_size` — src/tools_mem.py
+- `mem_locate_pointer_chains` — src/tools_mem.py
+- `mem_monitor_value_change` — src/tools_mem.py
+- `mem_read_bytes` — src/tools_mem.py
+- `mem_scan_pattern` — src/tools_mem.py
+- `mem_verify_checksum` — src/tools_mem.py
+- `mem_write_bytes` — src/tools_mem.py
 
-### APK Handling (`tools_apk.py` — 15 tools)
-- `apk_pull_from_device`, `apk_extract`, `apk_extract_native_libs`
-- `apk_decompile_smali`, `apk_recompile`, `apk_sign`
-- `apk_install_patched`, `patch_manifest_debuggable`
-- `detect_apk_protection`, `apk_verify_signature`
-- `apk_get_version`, `diff_apks`, `search_java_source`
-- `detect_ssl_pinning`
+### NDK & Compilation (17 tools)
+- `audit_link_dependencies` — src/tools_ndk.py
+- `check_include_paths` — src/tools_ndk.py
+- `cmake_compile_target` — src/tools_ndk.py
+- `cmake_generate_config` — src/tools_ndk.py
+- `get_ndk_version` — src/tools_ndk.py
+- `ndk_build_ccache` — src/tools_ndk.py
+- `ndk_build_clean` — src/tools_ndk.py
+- `ndk_build_debug` — src/tools_ndk.py
+- `ndk_build_module` — src/tools_ndk.py
+- `ndk_build_release` — src/tools_ndk.py
+- `parse_compiler_errors` — src/tools_ndk.py
+- `patch_makefile` — src/tools_ndk.py
+- `patch_manifest_debuggable` — src/tools_ndk.py
+- `set_compiler_flags` — src/tools_ndk.py
+- `strip_symbols` — src/tools_ndk.py
+- `verify_elf_header` — src/tools_ndk.py
+- `verify_elf_symbols` — src/tools_ndk.py
 
-### Server (`server.py` — 1 tool)
-- `health_check`
+### Server Utility (1 tools)
+- `health_check` — src/server.py
 
----
-
-## Core Infrastructure (`shared.py`)
-
-| Class / Function | Purpose |
-|---|---|
-| `CrashContext` | Structured crash report dataclass |
-| `CrashTrapDaemon` | Background thread reading `adb logcat -b crash` |
-| `_adb_run()` | ADB command runner with retries |
-| `_adb_shell()` | Convenience wrapper for `adb shell` |
-| `_check_ndk_toolchain()` | Verifies NDK clang is reachable |
-| `_parse_ndk_errors()` | Structured NDK build output parser |
-
-## Key Constants
-
-| Constant | Source |
-|---|---|
-| `ADB_BINARY` | `adb` or `adb.exe` (auto-detected) |
-| `NDK_CLANG` | `$ANDROID_NDK_HOME` arm64 clang |
-| `NDK_STRIP` | `llvm-strip` from NDK toolchain |
-| `NDK_TOOLCHAIN` | LLVM prebuilt path for host OS |
-| `PROJECT_ROOT` | Repository root path |
-| `LIBS_DIR` | `libs/` output directory |
-| `HOST_OS` | `darwin`, `linux`, or `windows` |
+### il2cpp & Metadata (15 tools)
+- `il2cpp_calculate_struct_padding` — src/tools_il2cpp.py
+- `il2cpp_diff_metadata` — src/tools_il2cpp.py
+- `il2cpp_export_type_definitions` — src/tools_il2cpp.py
+- `il2cpp_extract_string_literals` — src/tools_il2cpp.py
+- `il2cpp_find_class` — src/tools_il2cpp.py
+- `il2cpp_find_generic_instances` — src/tools_il2cpp.py
+- `il2cpp_generate_mock_header` — src/tools_il2cpp.py
+- `il2cpp_get_fields` — src/tools_il2cpp.py
+- `il2cpp_get_method_params` — src/tools_il2cpp.py
+- `il2cpp_get_method_rva` — src/tools_il2cpp.py
+- `il2cpp_get_nested_classes` — src/tools_il2cpp.py
+- `il2cpp_load_json` — src/tools_il2cpp.py
+- `il2cpp_run_dumper` — src/tools_il2cpp.py
+- `il2cpp_search_methods` — src/tools_il2cpp.py
+- `il2cpp_validate_method_signature` — src/tools_il2cpp.py

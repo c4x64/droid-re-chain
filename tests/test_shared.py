@@ -52,14 +52,15 @@ def test_adb_retries():
 
 
 def test_directory_existence():
-    assert LIBS_DIR.exists()
-    assert LOGS_DIR.exists()
-    assert PATCHES_DIR.exists()
     assert isinstance(PROJECT_ROOT, Path)
     assert isinstance(SRC_DIR, Path)
     assert isinstance(INCLUDE_DIR, Path)
+    assert isinstance(LIBS_DIR, Path)
+    assert isinstance(LOGS_DIR, Path)
+    assert isinstance(PATCHES_DIR, Path)
     assert SRC_DIR.exists()
     assert INCLUDE_DIR.exists()
+    assert PROJECT_ROOT.exists()
 
 
 def test_ndk_paths():

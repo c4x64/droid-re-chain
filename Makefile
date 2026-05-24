@@ -8,14 +8,13 @@ build:
 	ndk-build
 
 build-release:
-	python3 -c "from src.server import mcp; mcp._tool_manager.get_tool('ndk_build_module').fn()" || \
 	python3 scripts/build_ndk.py
 
 build-debug:
-	python3 -c "from src.server import mcp; mcp._tool_manager.get_tool('ndk_build_debug').fn()"
+	python3 scripts/build_ndk.py libmod_debug.so src/main.cpp -g -O0
 
 build-ccache:
-	python3 -c "from src.server import mcp; mcp._tool_manager.get_tool('ndk_build_ccache').fn()"
+	CCACHE=$$(command -v ccache) python3 scripts/build_ndk.py libmod_cc.so src/main.cpp -flto=thin
 
 clean:
 	rm -rf libs/*.so libs/*.o obj/ build/ __pycache__/ .pytest_cache/
@@ -33,21 +32,10 @@ run:
 	python3 -m src.server
 
 docs:
-	@echo "Documentation:"
+	python3 scripts/generate_docs.py
+	@echo "Docs regenerated: docs/api.md"
 	@echo "  README.md      - Architecture overview"
 	@echo "  AGENTS.md       - Agent instructions"
 	@echo "  SKILL.md        - opencode skill definition"
 	@echo "  examples/       - Runnable usage examples"
-	@echo "  docs/api.md     - API reference (generated)"
-	python3 -c "
-import json
-from src.server import mcp
-tools = mcp._tool_manager._tools
-cats = {}
-for name in sorted(tools):
-    prefix = name.split('_')[0] if '_' in name else name
-    cats.setdefault(prefix, []).append(name)
-for cat, names in sorted(cats.items()):
-    print(f'  {cat}: {len(names)} tools')
-print(f'  TOTAL: {len(tools)} tools')
-"
+	@echo "  CHANGELOG.md    - Release history"
