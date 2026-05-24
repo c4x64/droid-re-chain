@@ -12,6 +12,22 @@ Headless AI-driven Android reverse engineering automation pipeline.
 
 An MCP server exposing **122 tools** across **8 categories** for automated static/dynamic analysis of Android arm64 Unity/il2cpp applications. Runs with any MCP-compatible agent: **Cursor**, **Claude Code**, **opencode**, **VS Code** (Continue/Roo Cline), or any custom MCP host.
 
+## One-Liner Install
+
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/c4x64/droid-re-chain/main/install.sh | bash
+
+# With custom NDK path
+curl -fsSL https://raw.githubusercontent.com/c4x64/droid-re-chain/main/install.sh | bash -s -- --ndk /opt/ndk
+
+# Windows (PowerShell)
+powershell -Command "iwr -Uri https://raw.githubusercontent.com/c4x64/droid-re-chain/main/install.bat -OutFile install.bat; .\install.bat"
+
+# Start the server
+cd ~/droid-re-chain && python3 -m src.server
+```
+
 ## Quick Start
 
 ```bash
