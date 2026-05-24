@@ -1,50 +1,183 @@
+<p align="center">
+  <img src="https://img.shields.io/badge/tools-122-blue?style=flat-square">
+  <img src="https://img.shields.io/badge/tests-36-passing-green?style=flat-square">
+  <img src="https://img.shields.io/badge/python-3.10+-orange?style=flat-square">
+  <img src="https://img.shields.io/badge/platform-macOS%20|%20Linux%20|%20Windows-lightgrey?style=flat-square">
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
+</p>
+
 # droid-re-chain
 
 Headless AI-driven Android reverse engineering automation pipeline.
 
-An MCP server exposing **90 tools** across **6 categories** for automated static/dynamic analysis of Android arm64 Unity/il2cpp applications.
-
-## Architecture
-
-```
-src/server.py          — MCP entrypoint (registers all 6 modules)
-src/shared.py          — CrashTrapDaemon, _adb_run, NDK paths
-src/tools_adb.py       — 15 ADB/emulator management tools
-src/tools_ndk.py       — 15 NDK/compilation/CMake tools
-src/tools_il2cpp.py    — 15 symbol/metadata parsing tools
-src/tools_hook.py      — 15 memory patching/hook generation tools
-src/tools_trap.py      — 15 runtime/logcat crash trap tools
-src/tools_mem.py       — 15 process/memory analysis tools
-include/il2cpp.h       — il2cpp API wrapper (READ ONLY)
-src/main.cpp           — NDK hook module
-```
-
-## Tool Categories
-
-| Category | Count | Purpose |
-|----------|-------|---------|
-| ADB (`adb_*`) | 15 | Device control, push/pull, install, permissions |
-| NDK (`ndk_*`, `cmake_*`, `verify_*`) | 15 | Compilation, toolchain, ELF verification |
-| Il2cpp (`il2cpp_*`) | 15 | Symbol parsing, metadata, method RVA resolution |
-| Hook (`hook_*`) | 15 | Dobby stubs, patch generation, vtable swizzle |
-| Trap (`trap_*`) | 15 | Logcat streaming, crash detection, ANR monitoring |
-| Memory (`mem_*`) | 15 | /proc/pid/maps, pattern scan, pointer chains |
+An MCP server exposing **122 tools** across **8 categories** for automated static/dynamic analysis of Android arm64 Unity/il2cpp applications. Runs with any MCP-compatible agent: **Cursor**, **Claude Code**, **opencode**, **VS Code** (Continue/Roo Cline), or any custom MCP host.
 
 ## Quick Start
 
 ```bash
+git clone https://github.com/c4x64/droid-re-chain.git
+cd droid-re-chain
 pip install -r requirements.txt
-python3 src/server.py          # start MCP server (stdio mode)
+python3 -m src.server          # stdio mode (for MCP hosts)
+python3 -m src.server --sse    # SSE mode (for browser/dev tools)
 ```
 
-For NDK builds, set `ANDROID_NDK_HOME` to your NDK r25+ installation.
+For NDK builds, set `ANDROID_NDK_HOME` to your NDK r25+ path.
+
+## Architecture
+
+```
+src/server.py              — MCP entrypoint (--sse/--stdio flags)
+src/shared.py              — CrashTrapDaemon, _adb_run, NDK paths, cross-platform OS detection
+src/tools_adb.py           — 16 ADB/emulator management tools
+src/tools_ndk.py           — 16 NDK/compilation/CMake/ELF verification tools
+src/tools_il2cpp.py        — 15 symbol/metadata/Unity runtime tools
+src/tools_hook.py          — 15 memory patching/trampoline generation tools
+src/tools_trap.py          — 15 logcat crash trap/tombstone analysis tools
+src/tools_mem.py           — 15 process/memory/maps/pattern scan tools
+src/tools_frida.py         — 15 Frida attach/spawn/stalker/hook tools
+src/tools_apk.py           — 15 APK decompile/recompile/sign/patch tools
+include/il2cpp.h           — il2cpp API wrapper (READ ONLY)
+include/logging.h          — Thread-safe logging, BUILD_HASH, null guards
+src/main.cpp               — NDK hook module (constructor guard, install_hook)
+scripts/build_ndk.py       — ccache/LTO/sanitizer/ELF verify builder
+```
+
+## Tool Categories
+
+| Category | Tools | Key Capabilities |
+|----------|-------|-----------------|
+| **ADB** (`adb_*`) | 16 | connect, install, screencap, input, reboot, package lifecycle |
+| **NDK** (`ndk_*`, `verify_*`, etc.) | 17 | clang/LTO/ccache build, CMake, ELF verify, symbol audit, strip |
+| **il2cpp** (`il2cpp_*`) | 15 | assembly dump, class/method search, invoke, field read/write, profiler |
+| **Hook** (`hook_*`) | 15 | inline/PLT/GOT templates, dlopen intercept, trampoline gen, il2cpp method hook |
+| **Trap** (`trap_*`) | 15 | CrashTrapDaemon, logcat stream, signal filter, tombstone export, seccomp audit |
+| **Memory** (`mem_*`) | 15 | maps dump, pattern scan, RWX check, region compare, hash, alloc/free |
+| **Frida** (`frida_*`) | 15 | attach/spawn/detach, stalker trace, memory read/write, Java hook, module find |
+| **APK** (`apk_*`) | 15 | pull, extract, apktool decompile/recompile, sign, SSL pinning scan, protection detect |
+| **Server** (`health_*`) | 1 | health_check — all-subsystems status report |
+
+**Total: 122 tools**
+
+## Multi-Agent Setup
+
+### Cursor
+
+Add to `.cursor/mcp.json` (project-level, already included):
+
+```json
+{
+  "mcpServers": {
+    "droid-re-chain": {
+      "type": "local",
+      "command": ["bash", "mcp-entrypoint.sh"]
+    }
+  }
+}
+```
+
+Or run once from the repo: `bash scripts/setup_mcp.sh`
+
+### Claude Code CLI
+
+```bash
+bash scripts/setup_mcp.sh
+```
+
+This merges the server config into `~/.claude/settings.json`. Restart Claude Code.
+
+### opencode
+
+Already configured in `config/opencode.json`. Symlink into your project:
+
+```bash
+ln -sf $PWD/config/opencode.json $PWD/opencode.json
+```
+
+### CLI / Any MCP Host
+
+```bash
+# stdio mode (default)
+python3 -m src.server
+
+# SSE mode on port 8080
+python3 -m src.server --sse --port 8080
+
+# portable entrypoint (auto-discovers NDK, resolves paths)
+bash mcp-entrypoint.sh
+```
 
 ## Prerequisites
 
-- Python 3.10+
-- Android NDK r25+ (for compilation)
-- ADB (platform-tools)
-- Android emulator or device with root access
+- **Python 3.10+**
+- **Android NDK r25+** — set `ANDROID_NDK_HOME` for compilation tools
+- **ADB** (platform-tools) — `brew install android-platform-tools` / `apt install adb`
+- **Android emulator or device** with ADB debugging enabled (root optional; some tools need su)
+
+### Optional
+
+- **Frida** — `pip install frida-tools` for `frida_*` tools
+- **apktool** — for `apk_decompile_smali` / `apk_recompile`
+- **apksigner** — for `apk_sign` (comes with Android SDK build-tools)
+- **ccache** — `brew install ccache` / `apt install ccache` (speeds up NDK rebuilds)
+
+## Typical Workflow
+
+```
+1. Pull APK from device (apk_pull_from_device)
+2. Decompile to smali   (apk_decompile_smali)
+3. Find il2cpp offsets   (il2cpp_find_class → il2cpp_find_method → il2cpp_get_method_pointer)
+4. Generate hook        (hook_il2cpp_method / hook_arm64_inline)
+5. Compile libmod.so    (ndk_build_module)
+6. Verify ELF           (verify_elf_header → verify_elf_symbols)
+7. Push to device       (adb push via adb_file_*)
+8. Frida attach         (frida_attach → frida_eval_script)
+9. Monitor crashes      (trap_start_daemon → trap_get_crashes → trap_analyze_crash)
+10. Patch & repeat      (trap_suggest_patch → hook_arm64_inline → rebuild)
+```
+
+## Cross-Platform
+
+Auto-detects macOS/Linux/Windows for:
+- ADB binary name (`adb` / `adb.exe`)
+- NDK host tag (`darwin-x86_64`, `darwin-aarch64`, `linux-x86_64`, `windows-x86_64`)
+- NDK fallback paths (Homebrew, `~/Android/Sdk`, `~/android-ndk`)
+
+## Development
+
+```bash
+make install       # pip install everything
+make build-release # NDK compile via scripts/build_ndk.py
+make test          # 36 tests, all pass
+make lint          # ruff check src/
+make docs          # regenerate docs/api.md
+```
+
+## Testing
+
+```bash
+python3 -m pytest tests/ -v
+```
+
+36 tests covering OS detection, NDK path resolution, crash parser (empty/signal/full backtrace), ADB error handling, error limit truncation, daemon lifecycle.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `src/server.py` | MCP entrypoint with `--sse`/`--port` flags |
+| `src/shared.py` | CrashTrapDaemon, ADB/NDK wrappers, cross-platform detection |
+| `src/tools_*.py` | 8 module files, 122 tools total |
+| `include/logging.h` | Thread-safe logging macros, BUILD_HASH, null guards |
+| `include/il2cpp.h` | il2cpp runtime API wrapper (**READ ONLY**) |
+| `src/main.cpp` | NDK hook module with constructor guard + `install_hook()` |
+| `scripts/build_ndk.py` | Advanced NDK builder (ccache, LTO, sanitizers, ELF verify) |
+| `scripts/generate_docs.py` | Auto-generates `docs/api.md` from registered tools |
+| `scripts/setup_mcp.sh` | One-shot MCP config installer for Cursor/Claude Code |
+| `mcp-entrypoint.sh` | Portable launcher for any MCP host |
+| `config/opencode.json` | opencode MCP server registration |
+| `.cursor/mcp.json` | Cursor project-level MCP config |
+| `.claude/settings.json` | Claude Code project-level MCP config |
 
 ## License
 
