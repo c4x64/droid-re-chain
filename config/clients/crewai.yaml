@@ -1,0 +1,9 @@
+# Add to your CrewAI crew YAML or use env:
+# CREWAI_MCP_SERVERS='[{"name":"droid-re-chain","command":"bash","args":["mcp-entrypoint.sh"]}]'
+
+mcp_servers:
+  - name: droid-re-chain
+    type: stdio
+    command: bash
+    args:
+      - mcp-entrypoint.sh

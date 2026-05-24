@@ -1,0 +1,10 @@
+# Add to librechat.yaml mcp section
+# See: https://www.librechat.ai/docs/configuration/mcp
+
+mcp:
+  servers:
+    droid-re-chain:
+      type: stdio
+      command: bash
+      args:
+        - mcp-entrypoint.sh

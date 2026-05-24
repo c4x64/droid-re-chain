@@ -1,0 +1,10 @@
+{
+  "mcpServers": [
+    {
+      "name": "droid-re-chain",
+      "type": "stdio",
+      "command": "bash",
+      "args": ["${PROJECT_ROOT}/mcp-entrypoint.sh"]
+    }
+  ]
+}

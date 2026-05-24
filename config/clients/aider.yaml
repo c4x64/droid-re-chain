@@ -1,0 +1,8 @@
+# Add to .aider.conf.yml or ~/.aider.conf.yml
+# See: https://aider.chat/docs/config.html
+
+mcp-servers:
+  droid-re-chain:
+    command: bash
+    args:
+      - mcp-entrypoint.sh

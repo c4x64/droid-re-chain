@@ -1,0 +1,10 @@
+{
+  "node": {
+    "mcpServers": {
+      "droid-re-chain": {
+        "command": "bash",
+        "args": ["mcp-entrypoint.sh"]
+      }
+    }
+  }
+}

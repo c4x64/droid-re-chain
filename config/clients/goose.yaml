@@ -1,0 +1,8 @@
+name: droid-re-chain
+version: 0.3.0
+type: stdio
+command: bash
+args:
+  - "${PROJECT_ROOT}/mcp-entrypoint.sh"
+env:
+  ANDROID_NDK_HOME: "${ANDROID_NDK_HOME}"

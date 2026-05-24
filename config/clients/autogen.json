@@ -1,0 +1,13 @@
+{
+  "version": "0.1.0",
+  "components": {
+    "droid-re-chain": {
+      "type": "mcp",
+      "config": {
+        "command": "bash",
+        "args": ["mcp-entrypoint.sh"],
+        "transport": "stdio"
+      }
+    }
+  }
+}

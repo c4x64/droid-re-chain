@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "droid-re-chain": {
+      "command": "bash",
+      "args": ["${PROJECT_ROOT}/mcp-entrypoint.sh"],
+      "env": {
+        "ANDROID_NDK_HOME": "${env:ANDROID_NDK_HOME}"
+      }
+    }
+  }
+}

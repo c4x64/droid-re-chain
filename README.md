@@ -59,36 +59,44 @@ scripts/build_ndk.py       — ccache/LTO/sanitizer/ELF verify builder
 
 **Total: 122 tools**
 
-## Multi-Agent Setup
+## Multi-Client Setup
 
-### Cursor
-
-Add to `.cursor/mcp.json` (project-level, already included):
-
-```json
-{
-  "mcpServers": {
-    "droid-re-chain": {
-      "type": "local",
-      "command": ["bash", "mcp-entrypoint.sh"]
-    }
-  }
-}
-```
-
-Or run once from the repo: `bash scripts/setup_mcp.sh`
-
-### Claude Code CLI
+droid-re-chain works with **20+ MCP-compatible clients**. Run the auto-installer:
 
 ```bash
 bash scripts/setup_mcp.sh
 ```
 
-This merges the server config into `~/.claude/settings.json`. Restart Claude Code.
+It detects installed clients and writes configs for all of them:
+
+| # | Client | Scope | Config Path |
+|---|--------|-------|-------------|
+| 1 | **Cursor** | Project | `.cursor/mcp.json` |
+| 2 | **Windsurf** | Global | `~/.codeium/windsurf/mcp_config.json` |
+| 3 | **Antigravity** | Project | `mcp_config.json` |
+| 4 | **PearAI** | Project | `.pearai/mcp.json` |
+| 5 | **Claude Desktop** | Global | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| 6 | **ChatGPT Desktop** | Global | Settings → MCP Servers |
+| 7 | **LibreChat** | Project | `librechat.yaml` |
+| 8 | **Jan** | Global | `~/jan/plugins/droid-re-chain.json` |
+| 9 | **Goose CLI** | Global | `~/.goose/config.yaml` |
+| 10 | **Claude Code** | Project | `.claude/settings.json` |
+| 11 | **Aider** | Project | `.aider.conf.yml` |
+| 12 | **AutoGen Studio** | Project | `autogenstudio/workspace.json` |
+| 13 | **CrewAI** | Project | `crew.yaml` |
+| 14 | **LangGraph** | Project | `langgraph.json` |
+| 15 | **Roo Code** | Project | `.roo/mcp.json` |
+| 16 | **Continue** | Project | `.continue/mcpServers/droid-re-chain.json` |
+| 17 | **VS Code (1.102+)** | Workspace | `.vscode/mcp.json` |
+| 18 | **Composio** | Cloud | Dashboard → Add Custom MCP |
+| 19 | **LlamaIndex** | Runtime | Python `McpToolSpec` |
+| 20 | **Harvey AI** | Enterprise | Admin dashboard |
+
+See [`MCP_CLIENTS.md`](MCP_CLIENTS.md) for per-client details.
 
 ### opencode
 
-Already configured in `config/opencode.json`. Symlink into your project:
+Already configured in `config/opencode.json`. Symlink:
 
 ```bash
 ln -sf $PWD/config/opencode.json $PWD/opencode.json
@@ -97,14 +105,9 @@ ln -sf $PWD/config/opencode.json $PWD/opencode.json
 ### CLI / Any MCP Host
 
 ```bash
-# stdio mode (default)
-python3 -m src.server
-
-# SSE mode on port 8080
-python3 -m src.server --sse --port 8080
-
-# portable entrypoint (auto-discovers NDK, resolves paths)
-bash mcp-entrypoint.sh
+python3 -m src.server                     # stdio (default)
+python3 -m src.server --sse --port 8080   # SSE mode
+bash mcp-entrypoint.sh                    # portable launcher
 ```
 
 ## Prerequisites
