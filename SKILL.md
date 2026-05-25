@@ -5,7 +5,7 @@ description: Use ONLY for Android reverse engineering tasks involving NDK compil
 
 # droid-re-chain MCP Server
 
-Headless AI-driven Android reverse engineering automation pipeline — **120 tools across 8 categories**.
+Headless AI-driven Android reverse engineering automation pipeline — **151 tools across 14 categories**.
 
 ## When to use
 
@@ -20,7 +20,7 @@ Use when the task involves any of:
 - **Frida instrumentation**: Attach, spawn, stalker trace, memory read/write, Java hooks
 - **APK manipulation**: Decompile, recompile, sign, install, detect protections, SSL pinning
 
-## 8 Tool Categories (120 tools)
+## 14 Tool Categories (151 tools)
 
 ### 1. ADB & Emulator (16 tools)
 `adb_connect`, `adb_disconnect`, `adb_device_info`, `adb_devices`,
@@ -80,7 +80,27 @@ Use when the task involves any of:
 `apk_verify_signature`, `apk_get_version`, `diff_apks`,
 `search_java_source`, `detect_ssl_pinning`
 
-### 9. Server Utility (1 tool)
+### 9. Static Analysis (7 tools)
+`static_disassemble_offset`, `static_find_string_xrefs`, `static_detect_obfuscation`,
+`static_checksec`, `static_find_crypto_constants`, `static_extract_urls`, `static_call_graph`
+
+### 10. Offset Database (6 tools)
+`db_save_offset`, `db_load_offsets`, `db_remap_offsets`, `db_export_json`, `db_import_json`, `db_diff_versions`
+
+### 11. Session & Replay (4 tools)
+`session_save`, `session_restore`, `session_replay`, `session_export`
+
+### 12. Anti-Tamper Bypass (5 tools)
+`bypass_root_detect`, `bypass_emulator_detect`, `bypass_debugger_detect`,
+`bypass_integrity_check`, `spoof_device_fingerprint`
+
+### 13. IDA Integration (3 tools)
+`ida_import_symbols`, `ida_sync_offsets`, `ida_run_script`
+
+### 14. Network Analysis (4 tools)
+`net_intercept_https`, `net_dump_traffic`, `net_find_endpoints`, `net_decode_protobuf`
+
+### 15. Server Utility (1 tool)
 `health_check`
 
 ## Files

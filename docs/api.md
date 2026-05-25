@@ -1,6 +1,6 @@
 # API Reference
 
-Auto-generated from 122 registered tools.
+Auto-generated from 151 registered tools.
 Host: darwin
 
 ## Tools
@@ -37,6 +37,13 @@ Host: darwin
 - `detect_ssl_pinning` — src/tools_apk.py
 - `diff_apks` — src/tools_apk.py
 - `search_java_source` — src/tools_apk.py
+
+### Anti-Tamper Bypass (5 tools)
+- `bypass_debugger_detect` — src/tools_bypass.py
+- `bypass_emulator_detect` — src/tools_bypass.py
+- `bypass_integrity_check` — src/tools_bypass.py
+- `bypass_root_detect` — src/tools_bypass.py
+- `spoof_device_fingerprint` — src/tools_bypass.py
 
 ### Crash Trapping (15 tools)
 - `trap_capture_tombstone` — src/tools_trap.py
@@ -89,6 +96,11 @@ Host: darwin
 - `hook_verify_trampoline_size` — src/tools_hook.py
 - `hook_write_patch_map` — src/tools_hook.py
 
+### IDA Integration (3 tools)
+- `ida_import_symbols` — src/tools_ida.py
+- `ida_run_script` — src/tools_ida.py
+- `ida_sync_offsets` — src/tools_ida.py
+
 ### Memory & Process (15 tools)
 - `mem_alloc_sandbox_page` — src/tools_mem.py
 - `mem_audit_integrity_loops` — src/tools_mem.py
@@ -125,8 +137,37 @@ Host: darwin
 - `verify_elf_header` — src/tools_ndk.py
 - `verify_elf_symbols` — src/tools_ndk.py
 
+### Network Analysis (4 tools)
+- `net_decode_protobuf` — src/tools_net.py
+- `net_dump_traffic` — src/tools_net.py
+- `net_find_endpoints` — src/tools_net.py
+- `net_intercept_https` — src/tools_net.py
+
+### Offset Database (6 tools)
+- `db_diff_versions` — src/tools_database.py
+- `db_export_json` — src/tools_database.py
+- `db_import_json` — src/tools_database.py
+- `db_load_offsets` — src/tools_database.py
+- `db_remap_offsets` — src/tools_database.py
+- `db_save_offset` — src/tools_database.py
+
 ### Server Utility (1 tools)
 - `health_check` — src/server.py
+
+### Session & Replay (4 tools)
+- `session_export` — src/tools_session.py
+- `session_replay` — src/tools_session.py
+- `session_restore` — src/tools_session.py
+- `session_save` — src/tools_session.py
+
+### Static Analysis (7 tools)
+- `static_call_graph` — src/tools_static.py
+- `static_checksec` — src/tools_static.py
+- `static_detect_obfuscation` — src/tools_static.py
+- `static_disassemble_offset` — src/tools_static.py
+- `static_extract_urls` — src/tools_static.py
+- `static_find_crypto_constants` — src/tools_static.py
+- `static_find_string_xrefs` — src/tools_static.py
 
 ### il2cpp & Metadata (15 tools)
 - `il2cpp_calculate_struct_padding` — src/tools_il2cpp.py

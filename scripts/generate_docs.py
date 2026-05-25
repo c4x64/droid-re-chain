@@ -29,6 +29,13 @@ MODULES = {
     "diff": ("APK Handling", "src/tools_apk.py"),
     "search": ("APK Handling", "src/tools_apk.py"),
     "detect": ("APK Handling", "src/tools_apk.py"),
+    "static": ("Static Analysis", "src/tools_static.py"),
+    "db": ("Offset Database", "src/tools_database.py"),
+    "session": ("Session & Replay", "src/tools_session.py"),
+    "bypass": ("Anti-Tamper Bypass", "src/tools_bypass.py"),
+    "spoof": ("Anti-Tamper Bypass", "src/tools_bypass.py"),
+    "ida": ("IDA Integration", "src/tools_ida.py"),
+    "net": ("Network Analysis", "src/tools_net.py"),
     "health": ("Server Utility", "src/server.py"),
 }
 

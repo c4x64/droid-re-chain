@@ -71,9 +71,15 @@ scripts/build_ndk.py       — ccache/LTO/sanitizer/ELF verify builder
 | **Memory** (`mem_*`) | 15 | maps dump, pattern scan, RWX check, region compare, hash, alloc/free |
 | **Frida** (`frida_*`) | 15 | attach/spawn/detach, stalker trace, memory read/write, Java hook, module find |
 | **APK** (`apk_*`) | 15 | pull, extract, apktool decompile/recompile, sign, SSL pinning scan, protection detect |
+| **Static** (`static_*`) | 7 | capstone disassembly, string xrefs, obfuscation heuristics, checksec, crypto constants, URL extraction, call graph |
+| **Database** (`db_*`) | 6 | persist/load/remap offsets by binary hash, import/export JSON, diff versions |
+| **Session** (`session_*`) | 4 | snapshot/restore/replay session state, export shareable archives |
+| **Bypass** (`bypass_*`, `spoof_*`) | 5 | root/emulator/debugger/integrity check bypass, device fingerprint spoofing |
+| **IDA** (`ida_*`) | 3 | import IDA symbols, sync offsets back to IDA, execute IDAPython headless |
+| **Network** (`net_*`) | 4 | mitmproxy setup, traffic dump, endpoint discovery, protobuf decode |
 | **Server** (`health_*`) | 1 | health_check — all-subsystems status report |
 
-**Total: 122 tools**
+**Total: 151 tools**
 
 ## Multi-Client Setup
 
