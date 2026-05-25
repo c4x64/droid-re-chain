@@ -13,7 +13,7 @@ import os
 import json
 import argparse
 from mcp.server.fastmcp import FastMCP
-from src.shared import PROJECT_ROOT, HOST_OS, NDK_CLANG
+from src.shared import PROJECT_ROOT, HOST_OS, NDK_CLANG, LIBS_DIR
 from src.shared import _adb_run, ADB_BINARY
 from src.tools_adb import register as register_adb
 from src.tools_ndk import register as register_ndk

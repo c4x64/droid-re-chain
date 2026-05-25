@@ -158,6 +158,5 @@ Java.perform(function() {
     console.log('[spoof] Device fingerprint spoofed to ' + Build.MANUFACTURER.value + ' ' + Build.MODEL.value);
 });
 """ % (manufacturer, model, device, device, device, manufacturer.split()[0].lower(),
-        manufacturer.split()[0].lower(),
         fingerprint_suffix, fingerprint_suffix)
         return script

@@ -194,7 +194,7 @@ class TestCrashTrapDaemon:
         text = "FATAL EXCEPTION: main\nProcess: com.test\nsignal 11 (SIGSEGV)"
         ctx = daemon._parse_crash_block(text)
         assert ctx is not None
-        assert ctx.signal == "signal 11"
+        assert ctx.signal == "SIGSEGV"
         assert ctx.process_name == ""
 
     def test_parse_crash_block_full(self):
@@ -209,7 +209,7 @@ pc 0000abcd  libc.so
 """
         ctx = daemon._parse_crash_block(text)
         assert ctx is not None
-        assert ctx.signal == "signal 6"
+        assert ctx.signal == "SIGABRT"
         assert ctx.pid == "1234"
         assert ctx.tid == "5678"
         assert ctx.process_name == "com.test.thread"

@@ -161,7 +161,7 @@ class CrashTrapDaemon:
         ctx = CrashContext(raw=text)
         for key, pat in {"signal": r"(signal \d+)\s+\(([^)]+)\)", "pid": r"pid:\s+(\d+)", "tid": r"tid:\s+(\d+)", "process_name": r"pid: \d+, tid: \d+, name:\s+(\S+)"}.items():
             m = re.search(pat, text)
-            if m: setattr(ctx, key, m.group(1))
+            if m: setattr(ctx, key, m.group(2) if key == "signal" else m.group(1))
         m = re.search(r"pc\s+([0-9a-fA-F]+)", text)
         if m: ctx.fault_pc = m.group(1)
         for line in text.splitlines():
@@ -177,11 +177,12 @@ class CrashTrapDaemon:
 
     def get_crashes(self, timeout: float = 1.0) -> list:
         results = []
-        while True:
-            try:
+        try:
+            results.append(self._queue.get(timeout=timeout))
+            while True:
                 results.append(self._queue.get_nowait())
-            except queue.Empty:
-                break
+        except queue.Empty:
+            pass
         return results
 
 _crash_trap = CrashTrapDaemon()

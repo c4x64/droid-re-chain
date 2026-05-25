@@ -18,22 +18,20 @@ def register(mcp):
         count = 0
         for f in LIBS_DIR.glob("*"):
             try:
-                f.unlink()
-                count += 1
+                if f.is_file():
+                    f.unlink()
+                    count += 1
+                elif f.is_dir():
+                    import shutil
+                    shutil.rmtree(f)
+                    count += 1
             except OSError:
                 pass
         obj = PROJECT_ROOT / "obj"
         if obj.exists():
-            for f in obj.rglob("*"):
-                try:
-                    f.unlink()
-                    count += 1
-                except OSError:
-                    pass
-            try:
-                obj.rmdir()
-            except OSError:
-                pass
+            import shutil
+            shutil.rmtree(obj)
+            count += 1
         return f"cleaned {count} artifact(s)"
 
     @mcp.tool()
@@ -107,7 +105,7 @@ def register(mcp):
         """Build optimized release payload with stripped symbol trees.
         Args: source (in src/), output (in libs/)."""
         result = ndk_build_module(source=source, output=output)
-        return f"release: {result}"
+        return result
 
     @mcp.tool()
     def cmake_generate_config(build_dir: str = "build/cmake") -> str:

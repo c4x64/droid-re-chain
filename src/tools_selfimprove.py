@@ -3,6 +3,7 @@ import os
 import re
 import json
 import time
+import threading
 import subprocess
 import textwrap
 from pathlib import Path
@@ -23,12 +24,14 @@ TOOLS_MODULE_NAMES = {
     "tool": "tools_selfimprove", "contribute": "tools_selfimprove",
 }
 
+_SERIAL_LOCK = threading.Lock()
 SERIAL = 0
 
 def _next_tool_name(prefix: str) -> str:
     global SERIAL
-    SERIAL += 1
-    return f"{prefix}_auto_{SERIAL}"
+    with _SERIAL_LOCK:
+        SERIAL += 1
+        return f"{prefix}_auto_{SERIAL}"
 
 def _skill_path(name: str) -> Path:
     return SKILLS_DIR / f"{name}.json"
@@ -165,6 +168,13 @@ def register(mcp):
             return json.dumps({"status": "error", "error": f"module {mod_name}.py not found"}, indent=2)
         tool_name = _next_tool_name(prefix)
         code = skill["code"]
+        allowed = {"return", "import", "from", "def", "class", "if", "for", "while", "try", "except",
+                    "with", "as", "pass", "break", "continue", "json", "os", "subprocess", "time", "re",
+                    "Path", "str", "int", "float", "list", "dict", "set", "True", "False", "None"}
+        dangerous = ["__import__", "eval(", "exec(", "compile(", "open(", "__builtins__", "globals()", "locals()"]
+        for kw in dangerous:
+            if kw in code:
+                return json.dumps({"status": "error", "error": f"code contains forbidden pattern: {kw}"}, indent=2)
         func_body = textwrap.indent(code, "    ").lstrip()
         tool_code = f"""
     @mcp.tool()
@@ -218,10 +228,13 @@ def register(mcp):
             candidates = [tool_name]
         else:
             candidates = []
+            meta_tools = {"tool_generate", "tool_validate", "tool_register"}
             for f in sorted(PROJECT_ROOT.glob("src/tools_*.py")):
                 code = f.read_text()
-                for match in re.finditer(r"def (tool_\w+)\(", code):
+                for match in re.finditer(r"def (" + ("|".join(TOOLS_MODULE_NAMES.values())).replace("tools_", "") + r"_?\w+)\(", code):
                     tn = match.group(1)
+                    if tn in meta_tools:
+                        continue
                     if f"def {tn}(" not in server_code and tn not in candidates:
                         candidates.append(tn)
         for tn in candidates:
