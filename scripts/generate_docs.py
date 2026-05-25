@@ -37,6 +37,7 @@ MODULES = {
     "ida": ("IDA Integration", "src/tools_ida.py"),
     "net": ("Network Analysis", "src/tools_net.py"),
     "ghidra": ("Ghidra Integration", "src/tools_ghidra.py"),
+    "mcp": ("Server Utility", "src/tools_update.py"),
     "health": ("Server Utility", "src/server.py"),
 }
 
