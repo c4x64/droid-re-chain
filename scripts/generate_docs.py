@@ -38,6 +38,9 @@ MODULES = {
     "net": ("Network Analysis", "src/tools_net.py"),
     "ghidra": ("Ghidra Integration", "src/tools_ghidra.py"),
     "mcp": ("Server Utility", "src/tools_update.py"),
+    "skill": ("Self-Improvement", "src/tools_selfimprove.py"),
+    "tool": ("Self-Improvement", "src/tools_selfimprove.py"),
+    "contribute": ("Self-Improvement", "src/tools_selfimprove.py"),
     "health": ("Server Utility", "src/server.py"),
 }
 

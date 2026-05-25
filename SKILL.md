@@ -5,7 +5,7 @@ description: Use ONLY for Android reverse engineering tasks involving NDK compil
 
 # droid-re-chain MCP Server
 
-Headless AI-driven Android reverse engineering automation pipeline — **171 tools across 16 categories**.
+Headless AI-driven Android reverse engineering automation pipeline — **182 tools across 17 categories**.
 
 ## When to use
 
@@ -19,8 +19,10 @@ Use when the task involves any of:
 - **Hook generation**: Dobby stubs, vtable swizzle, trampoline verification
 - **Frida instrumentation**: Attach, spawn, stalker trace, memory read/write, Java hooks
 - **APK manipulation**: Decompile, recompile, sign, install, detect protections, SSL pinning
+- **Ghidra integration**: Headless analysis, decompilation, symbol export, xrefs, version tracking, FunctionID
+- **Self-improvement**: Skill learning, MCP tool auto-generation, validation, registration, and upstream contribution
 
-## 16 Tool Categories (171 tools)
+## 17 Tool Categories (182 tools)
 
 ### 1. ADB & Emulator (16 tools)
 `adb_connect`, `adb_disconnect`, `adb_device_info`, `adb_devices`,
@@ -102,11 +104,16 @@ Use when the task involves any of:
 `ghidra_run_script`, `ghidra_find_xrefs`, `ghidra_import_offsets`,
 `ghidra_diff_binaries`, `ghidra_detect_library_functions`
 
-### 15. Network Analysis (4 tools)
+### 15. Self-Improvement (10 tools)
+`skill_save`, `skill_load`, `skill_list`, `skill_apply`, `skill_promote`,
+`tool_generate`, `tool_validate`, `tool_register`,
+`session_learn`, `contribute_skill`
+
+### 16. Network Analysis (4 tools)
 `net_intercept_https`, `net_dump_traffic`, `net_find_endpoints`, `net_decode_protobuf`
 
-### 16. Server Utility (1 tool)
-`health_check`
+### 17. Server Utility (2 tools)
+`health_check`, `mcp_update`
 
 ## Files
 
