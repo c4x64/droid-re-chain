@@ -1,7 +1,7 @@
 """droid-re-chain MCP Server — modular registry.
-Imports and registers all 15 tool modules with FastMCP.
-Total: 163 tools across 15 categories: ADB, NDK, il2cpp, hook, trap, mem,
-frida, apk, static, database, session, bypass, ida, net, and dump.
+Imports and registers all 16 tool modules with FastMCP.
+Total: 171 tools across 16 categories: ADB, NDK, il2cpp, hook, trap, mem,
+frida, apk, static, database, session, bypass, ida, net, dump, and ghidra.
 
 Usage:
   python3 -m src.server              # stdio mode (default, for MCP hosts)
@@ -30,6 +30,7 @@ from src.tools_bypass import register as register_bypass
 from src.tools_ida import register as register_ida
 from src.tools_net import register as register_net
 from src.tools_dump import register as register_dump
+from src.tools_ghidra import register as register_ghidra
 
 mcp = FastMCP("droid-re-chain")
 
@@ -48,6 +49,7 @@ register_bypass(mcp)
 register_ida(mcp)
 register_net(mcp)
 register_dump(mcp)
+register_ghidra(mcp)
 
 @mcp.tool()
 def health_check() -> str:

@@ -50,6 +50,31 @@ NDK_SYSROOT = f"{NDK_TOOLCHAIN}/sysroot" if NDK_TOOLCHAIN else ""
 NDK_MAKE = f"{NDK_BASE}/prebuilt/{_HOST_TAG}/bin/make" if NDK_BASE else ""
 NDK_CMAKE_TOOLCHAIN = f"{NDK_BASE}/build/cmake/android.toolchain.cmake" if NDK_BASE else ""
 
+GHIDRA_HOME = os.environ.get("GHIDRA_HOME", "")
+if not GHIDRA_HOME:
+    for _candidate in [
+        "/opt/ghidra",
+        "/opt/ghidra_*",
+        os.path.expanduser("~/ghidra"),
+        os.path.expanduser("~/tools/ghidra"),
+    ]:
+        if _candidate.endswith("*"):
+            import glob as _glob
+            matches = sorted(_glob.glob(_candidate))
+            if matches:
+                GHIDRA_HOME = matches[-1]
+                break
+        elif os.path.isdir(_candidate):
+            # Look for actual ghidra_* subdirectory inside (e.g. /opt/ghidra/ghidra_11.2)
+            subdirs = sorted([d for d in Path(_candidate).iterdir() if d.name.startswith("ghidra_") and d.is_dir()])
+            if subdirs:
+                GHIDRA_HOME = str(subdirs[-1])
+            else:
+                GHIDRA_HOME = _candidate
+            break
+
+GHIDRA_ANALYZE = f"{GHIDRA_HOME}/support/analyzeHeadless" if GHIDRA_HOME else ""
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 LIBS_DIR = PROJECT_ROOT / "libs"
 SRC_DIR = PROJECT_ROOT / "src"

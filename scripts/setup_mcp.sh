@@ -27,7 +27,8 @@ servers = cfg.setdefault('mcpServers', {})
 servers['droid-re-chain'] = {
     'command': 'bash',
     'args': ['$project_root/mcp-entrypoint.sh'],
-    'env': {'ANDROID_NDK_HOME': '${ANDROID_NDK_HOME:-}'}
+    'env': {'ANDROID_NDK_HOME': '${ANDROID_NDK_HOME:-}',
+            'GHIDRA_HOME': '${GHIDRA_HOME:-}'}
 }
 with open('$file', 'w') as f: json.dump(cfg, f, indent=2)
 print('  merged')
@@ -40,8 +41,8 @@ cfg = {
         'droid-re-chain': {
             'command': 'bash',
             'args': ['$project_root/mcp-entrypoint.sh'],
-            'env': {'ANDROID_NDK_HOME': '${ANDROID_NDK_HOME:-}'}
-        }
+        'env': {'ANDROID_NDK_HOME': '${ANDROID_NDK_HOME:-}',
+                'GHIDRA_HOME': '${GHIDRA_HOME:-}'}
     }
 }
 with open('$file', 'w') as f: json.dump(cfg, f, indent=2)
@@ -143,6 +144,7 @@ args:
   - $PROJECT_ROOT/mcp-entrypoint.sh
 env:
   ANDROID_NDK_HOME: ${ANDROID_NDK_HOME:-}
+  GHIDRA_HOME: ${GHIDRA_HOME:-}
 YAML
 echo "  created"
 

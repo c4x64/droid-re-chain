@@ -47,7 +47,7 @@ echo [3/5] Installing Python dependencies...
 pip install -r requirements.txt
 
 :: 5. Check NDK
-echo [4/5] Checking Android NDK...
+echo [4/6] Checking Android NDK...
 if "%ANDROID_NDK_HOME%"=="" (
     if exist "%LOCALAPPDATA%\Android\Sdk\ndk\25.2.9519653" (
         setx ANDROID_NDK_HOME "%LOCALAPPDATA%\Android\Sdk\ndk\25.2.9519653"
@@ -60,8 +60,25 @@ if "%ANDROID_NDK_HOME%"=="" (
     echo   ANDROID_NDK_HOME=%ANDROID_NDK_HOME%
 )
 
-:: 6. Clients
-echo [5/5] Writing MCP client configs...
+:: 6. Check Ghidra
+echo [5/6] Checking Ghidra...
+if "%GHIDRA_HOME%"=="" (
+    if exist "%USERPROFILE%\ghidra" (
+        setx GHIDRA_HOME "%USERPROFILE%\ghidra"
+        echo   GHIDRA_HOME set to %%USERPROFILE%%\ghidra
+    ) else if exist "C:\opt\ghidra" (
+        setx GHIDRA_HOME "C:\opt\ghidra"
+        echo   GHIDRA_HOME set to C:\opt\ghidra
+    ) else (
+        echo   WARNING: GHIDRA_HOME not set.
+        echo   Set it: setx GHIDRA_HOME C:\path\to\ghidra
+    )
+) else (
+    echo   GHIDRA_HOME=%GHIDRA_HOME%
+)
+
+:: 7. Clients
+echo [6/6] Writing MCP client configs...
 
 > "%INSTALL_DIR%\.cursor\mcp.json" (
 echo { "mcpServers": { "droid-re-chain": { "command": "cmd", "args": ["/c", "%INSTALL_DIR%\mcp-entrypoint.bat"] } } }
@@ -75,7 +92,7 @@ echo.
 echo ============================================
 echo   droid-re-chain installed!
 echo   Location: %INSTALL_DIR%
-echo   Tools:    122 across 8 categories
+echo   Tools:    171 across 16 categories
 echo.
 echo   Server:
 echo     cd /d %INSTALL_DIR% ^&^& python -m src.server

@@ -5,7 +5,7 @@ description: Use ONLY for Android reverse engineering tasks involving NDK compil
 
 # droid-re-chain MCP Server
 
-Headless AI-driven Android reverse engineering automation pipeline — **151 tools across 14 categories**.
+Headless AI-driven Android reverse engineering automation pipeline — **171 tools across 16 categories**.
 
 ## When to use
 
@@ -20,7 +20,7 @@ Use when the task involves any of:
 - **Frida instrumentation**: Attach, spawn, stalker trace, memory read/write, Java hooks
 - **APK manipulation**: Decompile, recompile, sign, install, detect protections, SSL pinning
 
-## 14 Tool Categories (151 tools)
+## 16 Tool Categories (171 tools)
 
 ### 1. ADB & Emulator (16 tools)
 `adb_connect`, `adb_disconnect`, `adb_device_info`, `adb_devices`,
@@ -97,10 +97,15 @@ Use when the task involves any of:
 ### 13. IDA Integration (3 tools)
 `ida_import_symbols`, `ida_sync_offsets`, `ida_run_script`
 
-### 14. Network Analysis (4 tools)
+### 14. Ghidra Integration (8 tools)
+`ghidra_analyze`, `ghidra_export_symbols`, `ghidra_decompile_function`,
+`ghidra_run_script`, `ghidra_find_xrefs`, `ghidra_import_offsets`,
+`ghidra_diff_binaries`, `ghidra_detect_library_functions`
+
+### 15. Network Analysis (4 tools)
 `net_intercept_https`, `net_dump_traffic`, `net_find_endpoints`, `net_decode_protobuf`
 
-### 15. Server Utility (1 tool)
+### 16. Server Utility (1 tool)
 `health_check`
 
 ## Files
