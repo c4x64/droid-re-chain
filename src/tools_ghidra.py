@@ -3,7 +3,6 @@ import os
 import re
 import json
 import subprocess
-import tempfile
 from pathlib import Path
 from src.shared import GHIDRA_HOME, GHIDRA_ANALYZE, PROJECT_ROOT
 
@@ -107,7 +106,6 @@ public class ExportSymbols extends GhidraScript {
     }
 }"""
         script_path = _write_script("ExportSymbols.java", script_body)
-        imp = f"{GHIDRA_PROJECTS}/{project_name}/{binary_name}" if binary_name else ""
         extra = ["-scriptPath", str(GHIDRA_SCRIPTS)]
         if binary_name:
             extra += ["-process", binary_name]
@@ -158,7 +156,7 @@ public class DecompileFunction extends GhidraScript {{
         pseudocode = m.group(1).strip() if m else ""
         return json.dumps({"function_address": function_address,
                            "project": project_name, "binary": binary_name,
-                           "pseudocode": pseudocode,
+                           "pseudocode": pseudocode, "script": script_path,
                            "raw_output": out[:1000] if not pseudocode else "(in pseudocode)"}, indent=2)
 
     @mcp.tool()
@@ -208,7 +206,7 @@ public class FindXrefs extends GhidraScript {{
         }}
     }}
 }}"""
-        script_path = _write_script("FindXrefs.java", script_body)
+        _write_script("FindXrefs.java", script_body)
         extra = ["-scriptPath", str(GHIDRA_SCRIPTS)]
         if binary_name:
             extra += ["-process", binary_name]
@@ -265,7 +263,7 @@ public class ImportOffsets extends GhidraScript {{
         println("IMPORTED: " + count + " labels");
     }}
 }}"""
-        script_path = _write_script("ImportOffsets.java", script_body)
+        _write_script("ImportOffsets.java", script_body)
         extra = ["-scriptPath", str(GHIDRA_SCRIPTS)]
         if binary_name:
             extra += ["-process", binary_name]
@@ -346,7 +344,7 @@ public class LibraryDetect extends GhidraScript {
         println(sb.toString());
     }
 }"""
-        script_path = _write_script("LibraryDetect.java", script_body)
+        _write_script("LibraryDetect.java", script_body)
         extra = ["-scriptPath", str(GHIDRA_SCRIPTS)]
         if binary_name:
             extra += ["-process", binary_name]

@@ -215,7 +215,7 @@ def register(mcp):
             chunk = data[addr:addr + 256]
             for i in range(0, len(chunk) - 4, 4):
                 instr = struct.unpack("<I", chunk[i:i + 4])[0]
-                if (instr & 0xFC000000) == 0x14000000:
+                if (instr & 0xFC000000) == 0x94000000:
                     imm = instr & 0x03FFFFFF
                     if instr & 0x02000000:
                         imm |= ~0x03FFFFFF

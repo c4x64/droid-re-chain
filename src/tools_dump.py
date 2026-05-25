@@ -1,14 +1,15 @@
 """Runtime library dumping, ELF repair, symbol recovery, and post-dump tools."""
 import os
-import re
 import json
 import struct
 import subprocess
 from pathlib import Path
-from src.shared import ADB_BINARY, _adb_shell, LIBS_DIR, PROJECT_ROOT
+from src.shared import ADB_BINARY, PROJECT_ROOT
 
 DUMP_DIR = PROJECT_ROOT / "dumps"
 DUMP_DIR.mkdir(exist_ok=True)
+FRIDA_SCRIPTS = PROJECT_ROOT / "frida_scripts"
+FRIDA_SCRIPTS.mkdir(exist_ok=True)
 
 def _read_elf_word(data: bytes, offset: int) -> int:
     return struct.unpack_from("<I", data, offset)[0]
@@ -53,7 +54,9 @@ f.flush();
 f.close();
 console.log('OK: ' + filename + '|size=' + size + '|base=' + base);
 """
-        pull = f"Run the Frida script, then pull the dump:\n  frida -U -p {pid} -l script.js\n  {ADB_BINARY} pull /data/local/tmp/{lib_name}.dumped {DUMP_DIR}/"
+        script_path = FRIDA_SCRIPTS / f"dump_{lib_name}.js"
+        script_path.write_text(script)
+        pull = f"Run: frida -U -p {pid} -l {script_path}\nThen: {ADB_BINARY} pull /data/local/tmp/{lib_name}.dumped {DUMP_DIR}/"
         return pull
 
     @mcp.tool()
@@ -84,7 +87,9 @@ for (var i = 0; i < mods.length; i++) {
 }
 console.log('DONE: dumps in ' + dumpDir);
 """
-        return f"Run: frida -U -p {pid} -l script.js\nThen: {ADB_BINARY} pull /data/local/tmp/dump_all/ {DUMP_DIR}/"
+        script_path = FRIDA_SCRIPTS / f"dump_all_{pid}.js"
+        script_path.write_text(script)
+        return f"Run: frida -U -p {pid} -l {script_path}\nThen: {ADB_BINARY} pull /data/local/tmp/dump_all/ {DUMP_DIR}/"
 
     @mcp.tool()
     def dump_at_entrypoint(package: str, lib_to_dump: str = "libil2cpp.so") -> str:
@@ -119,7 +124,9 @@ Interceptor.attach(dlopenPtr, {{
 }});
 console.log('[entrypoint] Watching dlopen for ' + targetLib);
 """
-        return f"Run: frida -U -f {package} -l script.js --no-pause\nThen pull: {ADB_BINARY} pull /data/local/tmp/{lib_to_dump}.entrypoint_dump {DUMP_DIR}/"
+        script_path = FRIDA_SCRIPTS / f"entrypoint_{lib_to_dump}.js"
+        script_path.write_text(script)
+        return f"Run: frida -U -f {package} -l {script_path} --no-pause\nThen pull: {ADB_BINARY} pull /data/local/tmp/{lib_to_dump}.entrypoint_dump {DUMP_DIR}/"
 
     @mcp.tool()
     def dump_after_unpack(package: str, lib_to_dump: str = "libil2cpp.so",
@@ -184,7 +191,9 @@ if (!dumped) {{
 }}
 console.log('[unpack] Dump will trigger on ' + signalFn + ' call');
 """
-        return f"Run: frida -U -f {package} -l script.js --no-pause\nThen pull: {ADB_BINARY} pull /data/local/tmp/{lib_to_dump}.unpacked {DUMP_DIR}/"
+        script_path = FRIDA_SCRIPTS / f"unpack_{lib_to_dump}.js"
+        script_path.write_text(script)
+        return f"Run: frida -U -f {package} -l {script_path} --no-pause\nThen pull: {ADB_BINARY} pull /data/local/tmp/{lib_to_dump}.unpacked {DUMP_DIR}/"
 
     @mcp.tool()
     def fix_elf_header(binary_path: str) -> str:

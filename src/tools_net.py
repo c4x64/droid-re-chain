@@ -4,7 +4,7 @@ import re
 import json
 import subprocess
 from pathlib import Path
-from src.shared import PROJECT_ROOT, _adb_run, _adb_shell, ADB_BINARY, ADB_HOST
+from src.shared import PROJECT_ROOT, _adb_shell, ADB_BINARY, ADB_HOST, ADB_PORT
 
 MITM_DIR = PROJECT_ROOT / "mitm_data"
 MITM_DIR.mkdir(exist_ok=True)
@@ -131,10 +131,15 @@ def register(mcp):
                             break
                     decoded.append({"field": field_num, "type": "varint", "value": value})
                 elif wire_type == 2:
-                    if pos + 4 > len(data):
-                        break
-                    length = int.from_bytes(data[pos:pos+4], 'little')
-                    pos += 4
+                    length = 0
+                    shift = 0
+                    while pos < len(data):
+                        byte = data[pos]
+                        length |= (byte & 0x7F) << shift
+                        shift += 7
+                        pos += 1
+                        if not (byte & 0x80):
+                            break
                     if pos + length > len(data):
                         length = len(data) - pos
                     text = data[pos:pos+length]

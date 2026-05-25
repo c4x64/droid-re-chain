@@ -1,10 +1,9 @@
 """15 Runtime Diagnostics & Logcat Trapping tools."""
 import json
 import time
-import subprocess
 from src.shared import (
-    _adb_run, _adb_shell, _crash_trap, CrashContext,
-    ADB_BINARY, PROJECT_ROOT, LOGS_DIR,
+    _adb_run, _adb_shell, _crash_trap,
+    ADB_BINARY, LOGS_DIR,
 )
 
 def register(mcp):

@@ -1,8 +1,5 @@
 """15 Live Memory Analysis & Integrity Auditing tools."""
-import os
-import json
-import subprocess
-from src.shared import _adb_shell, _adb_run, ADB_BINARY, PROJECT_ROOT, LIBS_DIR
+from src.shared import _adb_shell, PROJECT_ROOT, LIBS_DIR
 
 def register(mcp):
 

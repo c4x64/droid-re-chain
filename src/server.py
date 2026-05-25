@@ -10,12 +10,11 @@ Usage:
   python3 -m src.server --sse --port 8080  # custom port
 """
 import os
-import sys
 import json
 import argparse
 from mcp.server.fastmcp import FastMCP
-from src.shared import LIBS_DIR, LOGS_DIR, PROJECT_ROOT, HOST_OS, NDK_CLANG
-from src.shared import _adb_run, _adb_shell, ADB_BINARY
+from src.shared import PROJECT_ROOT, HOST_OS, NDK_CLANG
+from src.shared import _adb_run, ADB_BINARY
 from src.tools_adb import register as register_adb
 from src.tools_ndk import register as register_ndk
 from src.tools_il2cpp import register as register_il2cpp

@@ -3,7 +3,6 @@ import os
 import re
 import json
 import time
-import shutil
 import subprocess
 import textwrap
 from pathlib import Path
@@ -173,12 +172,12 @@ def register(mcp):
         \"\"\"{skill['description']}\"\"\"
 {func_body}"""
         existing = mod_path.read_text()
-        insert_before = "\ndef register(mcp):"
+        insert_before = "\n    @mcp.tool()"
         if insert_before in existing:
             existing = existing.replace(insert_before, tool_code + "\n" + insert_before, 1)
             mod_path.write_text(existing)
         else:
-            return json.dumps({"status": "error", "error": "cannot find register(mcp) anchor in module"}, indent=2)
+            return json.dumps({"status": "error", "error": "cannot find @mcp.tool() anchor in register(mcp)"}, indent=2)
         skill["tool_name"] = tool_name
         skill["module"] = mod_name
         path.write_text(json.dumps(skill, indent=2))
@@ -232,7 +231,6 @@ def register(mcp):
                     mod_stem = mod_file.stem
                     reg_name = f"register_{mod_stem.replace('tools_', '')}"
                     if reg_name not in server_code:
-                        import_line = f"from src.{mod_stem} import register as {reg_name}"
                         server_code = server_code.replace(
                             "from src.tools_update import register as register_update",
                             f"from src.{mod_stem} import register as {reg_name}\nfrom src.tools_update import register as register_update")
@@ -248,7 +246,6 @@ def register(mcp):
         if gen_script.exists():
             subprocess.run([gen_script], capture_output=True, text=True, timeout=30, cwd=str(PROJECT_ROOT))
             results.append({"action": "docs_regenerated"})
-        total = tools_added if tool_name else tools_added
         registered_now = tools_added
         return json.dumps({"status": "ok" if registered_now > 0 else "no_change",
                            "tools_registered": registered_now,

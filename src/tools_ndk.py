@@ -4,9 +4,9 @@ import subprocess
 import json
 from pathlib import Path
 from src.shared import (
-    _check_ndk_toolchain, _parse_ndk_errors, _adb_run, _adb_shell,
-    NDK_CLANG, NDK_CLANGXX, NDK_STRIP, NDK_SYSROOT, NDK_CMAKE_TOOLCHAIN,
-    NDK_TOOLCHAIN, NDK_BASE, NDK_MAKE,
+    _check_ndk_toolchain, _parse_ndk_errors,
+    NDK_CLANG, NDK_STRIP, NDK_SYSROOT, NDK_CMAKE_TOOLCHAIN,
+    NDK_TOOLCHAIN, NDK_BASE,
     PROJECT_ROOT, LIBS_DIR, SRC_DIR, INCLUDE_DIR,
 )
 

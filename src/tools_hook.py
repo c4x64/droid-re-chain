@@ -1,8 +1,5 @@
 """15 Memory Patching & Native Hooking tools."""
-import os
 import json
-from pathlib import Path
-from src.shared import PROJECT_ROOT, LIBS_DIR, SRC_DIR
 
 def register(mcp):
 
