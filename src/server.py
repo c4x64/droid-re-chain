@@ -21,24 +21,24 @@ from src.shared import PROJECT_ROOT, HOST_OS, NDK_CLANG, LIBS_DIR
 from src.shared import _adb_run, ADB_BINARY
 
 _CATEGORIES = {
-    "adb": ("src.tools_adb", "register_adb"),
-    "ndk": ("src.tools_ndk", "register_ndk"),
-    "il2cpp": ("src.tools_il2cpp", "register_il2cpp"),
-    "hook": ("src.tools_hook", "register_hook"),
-    "trap": ("src.tools_trap", "register_trap"),
-    "mem": ("src.tools_mem", "register_mem"),
-    "frida": ("src.tools_frida", "register_frida"),
-    "apk": ("src.tools_apk", "register_apk"),
-    "static": ("src.tools_static", "register_static"),
-    "database": ("src.tools_database", "register_database"),
-    "session": ("src.tools_session", "register_session"),
-    "bypass": ("src.tools_bypass", "register_bypass"),
-    "ida": ("src.tools_ida", "register_ida"),
-    "net": ("src.tools_net", "register_net"),
-    "dump": ("src.tools_dump", "register_dump"),
-    "ghidra": ("src.tools_ghidra", "register_ghidra"),
-    "update": ("src.tools_update", "register_update"),
-    "selfimprove": ("src.tools_selfimprove", "register_selfimprove"),
+    "adb": "src.tools_adb",
+    "ndk": "src.tools_ndk",
+    "il2cpp": "src.tools_il2cpp",
+    "hook": "src.tools_hook",
+    "trap": "src.tools_trap",
+    "mem": "src.tools_mem",
+    "frida": "src.tools_frida",
+    "apk": "src.tools_apk",
+    "static": "src.tools_static",
+    "database": "src.tools_database",
+    "session": "src.tools_session",
+    "bypass": "src.tools_bypass",
+    "ida": "src.tools_ida",
+    "net": "src.tools_net",
+    "dump": "src.tools_dump",
+    "ghidra": "src.tools_ghidra",
+    "update": "src.tools_update",
+    "selfimprove": "src.tools_selfimprove",
 }
 
 mcp = FastMCP("droid-re-chain")
@@ -51,10 +51,8 @@ def _load_categories():
 
 import importlib
 for cat in _load_categories():
-    mod_path, fn_name = _CATEGORIES[cat]
-    mod = importlib.import_module(mod_path)
-    reg_fn = getattr(mod, fn_name[9:])
-    reg_fn(mcp)
+    mod = importlib.import_module(_CATEGORIES[cat])
+    mod.register(mcp)
 
 @mcp.tool()
 def health_check() -> str:

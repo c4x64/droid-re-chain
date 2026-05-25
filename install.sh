@@ -144,8 +144,11 @@ case "$INSTALL_PURPOSE" in
     echo -e "  ${CHECK} Custom: ${BOLD}${SELECTED_CATEGORIES}${NC}"
     ;;
   *)
-    SELECTED_CATEGORIES=""
-    echo -e "  ${CHECK} Profile: ${BOLD}Full${NC} (all 17 categories)"
+    if [ -z "$SELECTED_CATEGORIES" ]; then
+      echo -e "  ${CHECK} Profile: ${BOLD}Full${NC} (all 17 categories)"
+    else
+      echo -e "  ${CHECK} Profile: ${BOLD}Custom${NC} (${SELECTED_CATEGORIES})"
+    fi
     ;;
 esac
 
