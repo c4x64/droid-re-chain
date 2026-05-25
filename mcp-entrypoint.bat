@@ -1,8 +1,7 @@
 @echo off
 :: Portable launcher for droid-re-chain MCP server on Windows.
 :: Resolves project root regardless of where the script lives.
-set SCRIPT_DIR=%~dp0
-set PROJECT_ROOT=%SCRIPT_DIR%..
+set PROJECT_ROOT=%~dp0
 cd /d "%PROJECT_ROOT%"
 
 if "%ANDROID_NDK_HOME%"=="" (

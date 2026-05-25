@@ -156,7 +156,7 @@ fi
 # --- 6. Set up MCP client configs ---
 if [ "$SETUP_CLIENTS" = true ]; then
   echo "[6/6] Configuring MCP clients..."
-  bash "$INSTALL_DIR/scripts/setup_mcp.sh" 2>/dev/null || true
+  bash "$INSTALL_DIR/scripts/setup_mcp.sh"
   # Also write portable entrypoint configs
   mkdir -p "$INSTALL_DIR/.cursor" "$INSTALL_DIR/.claude"
   cat > "$INSTALL_DIR/.cursor/mcp.json" 2>/dev/null << JSON
@@ -194,8 +194,10 @@ echo ""
 echo "============================================"
 echo "  droid-re-chain installed!"
 echo "  Location: ${INSTALL_DIR}"
-echo "  Tools:    122 across 8 categories"
-echo "  Tests:    36 (run: cd ${INSTALL_DIR} && python3 -m pytest tests/)"
+TOOL_COUNT=$(python3 -c "from src.server import mcp; print(len(mcp._tool_manager._tools))" 2>/dev/null || echo "122")
+TEST_COUNT=$(python3 -m pytest tests/ --collect-only -q 2>&1 | tail -1 | grep -o '[0-9]*' || echo "36")
+echo "  Tools:    ${TOOL_COUNT} across 8 categories"
+echo "  Tests:    ${TEST_COUNT} (run: cd ${INSTALL_DIR} && python3 -m pytest tests/)"
 echo ""
 echo "  Server:"
 echo "    cd ${INSTALL_DIR} && python3 -m src.server"
