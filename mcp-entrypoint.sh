@@ -2,6 +2,7 @@
 # Portable launcher for droid-re-chain MCP server.
 # Resolves project root regardless of where the script lives,
 # so Cursor/Claude Code can invoke it from any working directory.
+# Also available as: droidre (from anywhere, after install)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

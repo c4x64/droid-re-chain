@@ -24,18 +24,22 @@ curl -fsSL https://raw.githubusercontent.com/c4x64/droid-re-chain/main/install.s
 # Windows (PowerShell)
 powershell -Command "iwr -Uri https://raw.githubusercontent.com/c4x64/droid-re-chain/main/install.bat -OutFile install.bat; .\install.bat"
 
-# Start the server
+# Run from anywhere
+droidre                    # stdio mode (for MCP hosts)
+droidre --sse              # SSE mode
+
+# Or from the project dir
 cd ~/droid-re-chain && python3 -m src.server
 ```
-
+ 
 ## Quick Start
-
+ 
 ```bash
 git clone https://github.com/c4x64/droid-re-chain.git
 cd droid-re-chain
 pip install -r requirements.txt
-python3 -m src.server          # stdio mode (for MCP hosts)
-python3 -m src.server --sse    # SSE mode (for browser/dev tools)
+droidre                        # stdio mode (for MCP hosts)
+droidre --sse                  # SSE mode (for browser/dev tools)
 ```
 
 For NDK builds, set `ANDROID_NDK_HOME` to your NDK r25+ path.
@@ -127,8 +131,8 @@ ln -sf $PWD/config/opencode.json $PWD/opencode.json
 ### CLI / Any MCP Host
 
 ```bash
-python3 -m src.server                     # stdio (default)
-python3 -m src.server --sse --port 8080   # SSE mode
+droidre                                   # stdio (default, from anywhere)
+droidre --sse --port 8080                 # SSE mode
 bash mcp-entrypoint.sh                    # portable launcher
 ```
 

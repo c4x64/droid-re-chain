@@ -324,7 +324,19 @@ if [ -n "$SELECTED_CATEGORIES" ]; then
   echo -e "  ${CHECK} Categories limited to: ${SELECTED_CATEGORIES}"
 fi
 
-# Symlink
+# Symlink droidre command to ~/.local/bin
+LOCAL_BIN="$HOME/.local/bin"
+mkdir -p "$LOCAL_BIN"
+ln -sf "$INSTALL_DIR/droidre" "$LOCAL_BIN/droidre" 2>/dev/null || true
+SHELL_RC="$(detect_shell_rc)"
+if ! echo "$PATH" | grep -q "$LOCAL_BIN" 2>/dev/null; then
+  echo "export PATH=\"\$PATH:$LOCAL_BIN\"" >> "$SHELL_RC"
+  export PATH="$PATH:$LOCAL_BIN"
+  echo -e "  ${CHECK} ~/.local/bin added to PATH in ${SHELL_RC}"
+fi
+echo -e "  ${CHECK} Run 'droidre' from anywhere to start the server"
+
+# Symlink project root to ~/droid-re-chain for convenience
 SYMLINK_DIR="$(dirname "$INSTALL_DIR")"
 if [ "$SYMLINK_DIR" != "$HOME" ]; then
   ln -sf "$INSTALL_DIR" "$HOME/droid-re-chain" 2>/dev/null || true
@@ -344,9 +356,9 @@ if [ -n "${SELECTED_CATEGORIES:-}" ]; then
 fi
 echo ""
 echo -e "  ${BOLD}Server:${NC}"
-echo -e "    python3 -m src.server"
-echo -e "    python3 -m src.server --sse --port ${SSE_PORT}"
-echo -e "    bash mcp-entrypoint.sh"
+echo -e "    ${BOLD}droidre${NC}              # stdio (MCP hosts)"
+echo -e "    ${BOLD}droidre --sse${NC}        # SSE mode"
+echo -e "    ${BOLD}droidre --sse --port ${SSE_PORT}${NC}"
 echo ""
 echo -e "  ${BOLD}MCP clients configured:${NC}"
 echo -e "    ${INSTALL_DIR}/.cursor/mcp.json"
