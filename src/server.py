@@ -1,13 +1,17 @@
 """droid-re-chain MCP Server — modular registry.
-Imports and registers all 16 tool modules with FastMCP.
+Imports and registers tool modules with FastMCP.
 Total: 182 tools across 17 categories: ADB, NDK, il2cpp, hook, trap, mem,
 frida, apk, static, database, session, bypass, ida, net, dump, ghidra,
-and self-improvement.
+update, and self-improvement.
 
 Usage:
-  python3 -m src.server              # stdio mode (default, for MCP hosts)
-  python3 -m src.server --sse        # SSE mode (for browser/dev tools)
-  python3 -m src.server --sse --port 8080  # custom port
+  python3 -m src.server                         # all categories (stdio)
+  python3 -m src.server --sse                   # SSE mode
+  DROID_CATEGORIES=adb,ndk python3 -m src.server  # subset only
+
+Supported DROID_CATEGORIES values (comma-separated):
+  adb, ndk, il2cpp, hook, trap, mem, frida, apk, static,
+  database, session, bypass, ida, net, dump, ghidra, update, selfimprove
 """
 import os
 import json
@@ -15,45 +19,42 @@ import argparse
 from mcp.server.fastmcp import FastMCP
 from src.shared import PROJECT_ROOT, HOST_OS, NDK_CLANG, LIBS_DIR
 from src.shared import _adb_run, ADB_BINARY
-from src.tools_adb import register as register_adb
-from src.tools_ndk import register as register_ndk
-from src.tools_il2cpp import register as register_il2cpp
-from src.tools_hook import register as register_hook
-from src.tools_trap import register as register_trap
-from src.tools_mem import register as register_mem
-from src.tools_frida import register as register_frida
-from src.tools_apk import register as register_apk
-from src.tools_static import register as register_static
-from src.tools_database import register as register_database
-from src.tools_session import register as register_session
-from src.tools_bypass import register as register_bypass
-from src.tools_ida import register as register_ida
-from src.tools_net import register as register_net
-from src.tools_dump import register as register_dump
-from src.tools_ghidra import register as register_ghidra
-from src.tools_update import register as register_update
-from src.tools_selfimprove import register as register_selfimprove
+
+_CATEGORIES = {
+    "adb": ("src.tools_adb", "register_adb"),
+    "ndk": ("src.tools_ndk", "register_ndk"),
+    "il2cpp": ("src.tools_il2cpp", "register_il2cpp"),
+    "hook": ("src.tools_hook", "register_hook"),
+    "trap": ("src.tools_trap", "register_trap"),
+    "mem": ("src.tools_mem", "register_mem"),
+    "frida": ("src.tools_frida", "register_frida"),
+    "apk": ("src.tools_apk", "register_apk"),
+    "static": ("src.tools_static", "register_static"),
+    "database": ("src.tools_database", "register_database"),
+    "session": ("src.tools_session", "register_session"),
+    "bypass": ("src.tools_bypass", "register_bypass"),
+    "ida": ("src.tools_ida", "register_ida"),
+    "net": ("src.tools_net", "register_net"),
+    "dump": ("src.tools_dump", "register_dump"),
+    "ghidra": ("src.tools_ghidra", "register_ghidra"),
+    "update": ("src.tools_update", "register_update"),
+    "selfimprove": ("src.tools_selfimprove", "register_selfimprove"),
+}
 
 mcp = FastMCP("droid-re-chain")
 
-register_adb(mcp)
-register_ndk(mcp)
-register_il2cpp(mcp)
-register_hook(mcp)
-register_trap(mcp)
-register_mem(mcp)
-register_frida(mcp)
-register_apk(mcp)
-register_static(mcp)
-register_database(mcp)
-register_session(mcp)
-register_bypass(mcp)
-register_ida(mcp)
-register_net(mcp)
-register_dump(mcp)
-register_ghidra(mcp)
-register_update(mcp)
-register_selfimprove(mcp)
+def _load_categories():
+    raw = os.environ.get("DROID_CATEGORIES", "")
+    if not raw:
+        return list(_CATEGORIES.keys())
+    return [c.strip() for c in raw.split(",") if c.strip() in _CATEGORIES]
+
+import importlib
+for cat in _load_categories():
+    mod_path, fn_name = _CATEGORIES[cat]
+    mod = importlib.import_module(mod_path)
+    reg_fn = getattr(mod, fn_name[9:])
+    reg_fn(mcp)
 
 @mcp.tool()
 def health_check() -> str:

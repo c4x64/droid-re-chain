@@ -22,4 +22,5 @@ if [ -z "${ANDROID_NDK_HOME:-}" ]; then
   done
 fi
 
-exec python3 -m src.server "$@"
+# If DROID_CATEGORIES is set, pass it through to limit loaded modules
+exec env DROID_CATEGORIES="${DROID_CATEGORIES:-}" python3 -m src.server "$@"
