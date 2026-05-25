@@ -167,10 +167,10 @@ def register(mcp):
         if not mod_path.exists():
             return json.dumps({"status": "error", "error": f"module {mod_name}.py not found"}, indent=2)
         tool_name = _next_tool_name(prefix)
+        params_raw = skill.get("params", "")
+        if not isinstance(params_raw, str) or not re.fullmatch(r"[\w\s,='\":._\[\]()]*", params_raw):
+            return json.dumps({"status": "error", "error": "params field contains invalid characters"}, indent=2)
         code = skill["code"]
-        allowed = {"return", "import", "from", "def", "class", "if", "for", "while", "try", "except",
-                    "with", "as", "pass", "break", "continue", "json", "os", "subprocess", "time", "re",
-                    "Path", "str", "int", "float", "list", "dict", "set", "True", "False", "None"}
         dangerous = ["__import__", "eval(", "exec(", "compile(", "open(", "__builtins__", "globals()", "locals()"]
         for kw in dangerous:
             if kw in code:
@@ -178,7 +178,7 @@ def register(mcp):
         func_body = textwrap.indent(code, "    ").lstrip()
         tool_code = f"""
     @mcp.tool()
-    def {tool_name}({skill.get('params', '')}) -> str:
+    def {tool_name}({params_raw}) -> str:
         \"\"\"{skill['description']}\"\"\"
 {func_body}"""
         existing = mod_path.read_text()
@@ -199,7 +199,11 @@ def register(mcp):
     def tool_validate(tool_name: str, test_input: str = "") -> str:
         """Run a newly generated tool against a test input and verify output. Args: tool_name, test_input (JSON arg string)."""
         try:
-            from src.server import mcp as server_mcp
+            import importlib
+            svr = importlib.import_module("src.server")
+            server_mcp = getattr(svr, "mcp", None)
+            if server_mcp is None:
+                return json.dumps({"status": "error", "error": "cannot resolve mcp instance"}, indent=2)
         except ImportError as e:
             return json.dumps({"status": "error", "error": f"cannot import server: {e}"}, indent=2)
         try:
@@ -231,9 +235,9 @@ def register(mcp):
             meta_tools = {"tool_generate", "tool_validate", "tool_register"}
             for f in sorted(PROJECT_ROOT.glob("src/tools_*.py")):
                 code = f.read_text()
-                for match in re.finditer(r"def (" + ("|".join(TOOLS_MODULE_NAMES.values())).replace("tools_", "") + r"_?\w+)\(", code):
+                for match in re.finditer(r"\n    def (\w+)\(", code):
                     tn = match.group(1)
-                    if tn in meta_tools:
+                    if tn in meta_tools or tn.startswith("_") or tn in ("register",):
                         continue
                     if f"def {tn}(" not in server_code and tn not in candidates:
                         candidates.append(tn)
@@ -260,10 +264,12 @@ def register(mcp):
             subprocess.run([gen_script], capture_output=True, text=True, timeout=30, cwd=str(PROJECT_ROOT))
             results.append({"action": "docs_regenerated"})
         registered_now = tools_added
+        from src.server import mcp as _mcp
+        total = len(_mcp._tool_manager._tools)
         return json.dumps({"status": "ok" if registered_now > 0 else "no_change",
                            "tools_registered": registered_now,
                            "results": results,
-                           "total_tools": 182 + registered_now}, indent=2)
+                           "total_tools": total}, indent=2)
 
     @mcp.tool()
     def session_learn(review_data: str = "") -> str:

@@ -10,6 +10,15 @@ from pathlib import Path
 from typing import Optional
 from dataclasses import dataclass, field
 
+# Load .env file if present
+_env_path = Path(__file__).resolve().parent.parent / ".env"
+if _env_path.is_file():
+    for _line in _env_path.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _v = _line.split("=", 1)
+            os.environ.setdefault(_k.strip(), _v.strip().strip("\"'"))
+
 HOST_OS = platform.system().lower()
 IS_MACOS = HOST_OS == "darwin"
 IS_LINUX = HOST_OS == "linux"
@@ -28,6 +37,7 @@ else:
 
 ADB_HOST = "127.0.0.1"
 ADB_PORT = 5555
+ADB_SERIAL = os.environ.get("ADB_SERIAL", "")
 
 NDK_BASE = os.environ.get("ANDROID_NDK_HOME", "")
 if not NDK_BASE:
@@ -129,7 +139,10 @@ class CrashTrapDaemon:
             self._thread.join(timeout=5)
 
     def _trap_loop(self):
-        cmd = [ADB_BINARY, "logcat", "-v", "threadtime", "-b", "crash"]
+        cmd = [ADB_BINARY]
+        if ADB_SERIAL:
+            cmd += ["-s", ADB_SERIAL]
+        cmd += ["logcat", "-v", "threadtime", "-b", "crash"]
         try:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
         except FileNotFoundError:
@@ -190,7 +203,11 @@ _crash_trap = CrashTrapDaemon()
 _ADB_RETRIES = 3
 
 def _adb_run(cmd: list[str], timeout: int = 30) -> str:
+    if not cmd:
+        return "ERROR: empty command"
     last_err = ""
+    if ADB_SERIAL and cmd[0] == ADB_BINARY and ADB_BINARY in cmd[0]:
+        cmd = cmd[:1] + ["-s", ADB_SERIAL] + cmd[1:]
     for attempt in range(_ADB_RETRIES):
         try:
             r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)

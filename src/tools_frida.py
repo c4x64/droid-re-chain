@@ -90,12 +90,11 @@ if (mod) {{
     Stalker.follow(Process.getCurrentThreadId(), {{
         events: {{ call: false, ret: false, exec: true }},
         transform: function(iterator) {{
-            var instruction = iterator.next();
-            var start = instruction.address;
-            do {{
+            var instruction;
+            while ((instruction = iterator.next()) !== null) {{
                 if (instruction.address.sub(mod.base).toInt32() > 0x100000) break;
                 iterator.keep();
-            }} while ((instruction = iterator.next()) !== null);
+            }}
         }}
     }});
 }}"""

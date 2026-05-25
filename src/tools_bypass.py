@@ -25,9 +25,12 @@ Java.perform(function() {
     };
     // Hook Build.TAGS to hide test-keys
     var Build = Java.use('android.os.Build');
-    Build.TAGS.value = 'release-keys';
-    Build.FINGERPRINT.value = Build.FINGERPRINT.value.replace('/test-keys', '/release-keys');
-    console.log('[bypass] Root detection hooks installed for ' + %s);
+    Java.scheduleOnMainThread(function() {
+        try { Java.cast(Build.class, Java.use('java.lang.Class')).set(Build, 'TAGS', 'release-keys'); } catch(e) {}
+        try { Java.cast(Build.class, Java.use('java.lang.Class')).set(Build, 'FINGERPRINT',
+            Java.use('android.os.Build').FINGERPRINT.value.replace('/test-keys', '/release-keys')); } catch(e) {}
+    });
+    console.log('[bypass] Root detection hooks installed for ' + '%s');
 });
 """ % json.dumps(package)
         return script
@@ -78,7 +81,7 @@ Java.perform(function() {
         Interceptor.attach(ptracePtr, {
             onEnter: function(args) {
                 var request = args[0].toInt32();
-                if (request === 0 || request === 9 || request === 10) {  // PTRACE_TRACEME, PTRACE_ATTACH, PTRACE_DETACH
+                if (request === 0 || request === 16 || request === 17) {  // PTRACE_TRACEME, PTRACE_ATTACH, PTRACE_DETACH
                     console.log('[bypass] Blocked ptrace call: ' + request);
                     this.returnValue = 0;
                 }
@@ -128,11 +131,12 @@ Java.perform(function() {
     }
     // Patch the APK signature hash comparison
     var Arrays = Java.use('java.util.Arrays');
+    var origEquals = Arrays.equals;
     Arrays.equals.implementation = function(a, b) {
         if (a !== null && b !== null && a.length === b.length) {
             return true;
         }
-        return this.equals(a, b);
+        return origEquals(a, b);
     };
     console.log('[bypass] Integrity check hooks installed for %s');
 });
@@ -157,6 +161,7 @@ Java.perform(function() {
     Build.TAGS.value = '%s';
     console.log('[spoof] Device fingerprint spoofed to ' + Build.MANUFACTURER.value + ' ' + Build.MODEL.value);
 });
-""" % (manufacturer, model, device, device, device, manufacturer.split()[0].lower(),
+""" % (manufacturer, model, device, device, device,
+        manufacturer.split()[0].lower(), manufacturer.split()[0].lower(),
         fingerprint_suffix, fingerprint_suffix)
         return script

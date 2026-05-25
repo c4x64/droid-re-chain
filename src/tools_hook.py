@@ -30,12 +30,20 @@ void install_hook_{method_pointer}(void *target) {{
         """Generate byte array mutation hook. Args: offset (hex), patch_bytes (hex), base_address."""
         if not base_address:
             base_address = "il2cpp_base"
+        patch_hex = patch_bytes.replace(" ", "")
+        patch_len = len(patch_hex) // 2
+        code = (
+            f"uint8_t patch[] = {{ "
+            + ", ".join(f"0x{patch_hex[i:i+2]}" for i in range(0, len(patch_hex), 2))
+            + f" }};\n"
+            f"memcpy((void*)({base_address} + 0x{offset}), patch, {patch_len});"
+        )
         return json.dumps({
             "offset": offset,
             "patch": patch_bytes,
             "base": base_address,
             "absolute": f"({base_address} + 0x{offset})",
-            "code": f"memset((void*)({base_address} + 0x{offset}), 0x{patch_bytes}, sizeof(0x{patch_bytes}));"
+            "code": code
         }, indent=2)
 
     @mcp.tool()
