@@ -145,3 +145,63 @@ Java.perform(function() {{
     }};
 }});"""
         return f"Hook script:\n{script}"
+
+    @mcp.tool()
+    def frida_dump_module(module_name: str = "libil2cpp.so") -> str:
+        """Dump a loaded module from memory via Frida's Process.getModuleByName. Args: module_name."""
+        script = f"""'use strict';
+var mod = Process.getModuleByName('{module_name}');
+if (mod) {{
+    var size = mod.size;
+    var base = mod.base;
+    var bytes = Memory.readByteArray(base, size);
+    var filename = '/data/local/tmp/' + '{module_name}' + '.dumped';
+    var f = new File(filename, 'wb');
+    f.write(bytes);
+    f.flush();
+    f.close();
+    console.log('DUMPED: ' + filename + ' (' + size + ' bytes from ' + base + ')');
+}} else {{
+    console.log('ERROR: module ' + '{module_name}' + ' not found');
+}}"""
+        return f"Dump script (run with: frida -U -l script.js <package>):\n{script}"
+
+    @mcp.tool()
+    def frida_find_decrypt_func(target_lib: str = "libil2cpp.so") -> str:
+        """Scan for the decryption routine by watching mmap calls. Args: target_lib."""
+        script = f"""'use strict';
+var mmapPtr = Module.findExportByName('libc.so', 'mmap');
+var targetBase = null;
+Interceptor.attach(mmapPtr, {{
+    onEnter: function(args) {{
+        this.addr = args[0];
+        this.size = args[1];
+        this.prot = args[2];
+    }},
+    onLeave: function(retval) {{
+        if (retval.toInt32() > 0 && this.prot === 3) {{
+            var libs = Process.enumerateModules();
+            for (var i = 0; i < libs.length; i++) {{
+                if (libs[i].name.indexOf('{target_lib}') >= 0) {{
+                    targetBase = libs[i].base;
+                    break;
+                }}
+            }}
+            if (targetBase) {{
+                console.log('DECRYPT mmap: size=' + this.size + ' mmap_ret=' + retval +
+                    ' target_base=' + targetBase);
+                var caller = Thread.backtrace(this.context, Backtracer.ACCURATE);
+                for (var j = 0; j < caller.length; j++) {{
+                    var mod = Process.findModuleByAddress(caller[j]);
+                    if (mod) {{
+                        var offset = caller[j].sub(mod.base);
+                        console.log('  caller[' + j + ']: ' + mod.name + ' + 0x' + offset.toString(16));
+                    }}
+                }}
+            }}
+        }}
+    }}
+}});
+console.log('[find_decrypt] Watching mmap for ' + '{target_lib}' + ' load...');
+"""
+        return f"Decrypt function finder script:\n{script}"
