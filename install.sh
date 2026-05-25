@@ -196,7 +196,7 @@ echo "  droid-re-chain installed!"
 echo "  Location: ${INSTALL_DIR}"
 TOOL_COUNT=$(python3 -c "from src.server import mcp; print(len(mcp._tool_manager._tools))" 2>/dev/null || echo "122")
 TEST_COUNT=$(python3 -m pytest tests/ --collect-only -q 2>&1 | tail -1 | grep -o '[0-9]*' || echo "36")
-echo "  Tools:    ${TOOL_COUNT} across 8 categories"
+echo "  Tools:    ${TOOL_COUNT} across 17 categories"
 echo "  Tests:    ${TEST_COUNT} (run: cd ${INSTALL_DIR} && python3 -m pytest tests/)"
 echo ""
 echo "  Server:"

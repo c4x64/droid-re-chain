@@ -237,7 +237,7 @@ cfg = {
             'command': 'bash',
             'args': ['$PROJECT_ROOT/mcp-entrypoint.sh'],
             'alwaysAllow': ['health_check'],
-            'disabled': false
+            'disabled': False
         }
     }
 }
