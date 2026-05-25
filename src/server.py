@@ -68,11 +68,12 @@ def main():
     parser = argparse.ArgumentParser(prog="droid-re-chain")
     parser.add_argument("--sse", action="store_true", help="Run in SSE mode instead of stdio")
     parser.add_argument("--port", type=int, default=8000, help="Port for SSE mode (default: 8000)")
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host for SSE mode (default: 127.0.0.1)")
     args = parser.parse_args()
-    if args.sse:
-        mcp.run(transport="sse", port=args.port)
-    else:
-        mcp.run(transport="stdio")
+    if args.port != 8000 or args.host != "127.0.0.1":
+        mcp.settings.port = args.port
+        mcp.settings.host = args.host
+    mcp.run(transport="sse" if args.sse else "stdio")
 
 if __name__ == "__main__":
     main()

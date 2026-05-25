@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # droidre — CLI entry point for droid-re-chain MCP server.
 # Usage:
-#   droidre              # stdio mode (for MCP hosts)
-#   droidre --sse        # SSE mode
-#   droidre --sse --port 8080
+#   droidre                       # stdio mode (for MCP hosts)
+#   droidre --sse                 # SSE mode (port 8000, localhost)
+#   droidre --sse --port 8080     # custom port
+#   droidre --sse --host 0.0.0.0  # listen on all interfaces
 #   droidre --help
 #
 # Installed by:
@@ -11,13 +12,22 @@
 #   install.sh           # symlinks this script to ~/.local/bin/droidre
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Resolve symlink to get the real script location
+SCRIPT_SRC="${BASH_SOURCE[0]}"
+while [ -L "$SCRIPT_SRC" ]; do
+  TARGET="$(readlink "$SCRIPT_SRC")"
+  if [[ "$TARGET" == /* ]]; then
+    SCRIPT_SRC="$TARGET"
+  else
+    SCRIPT_SRC="$(dirname "$SCRIPT_SRC")/$TARGET"
+  fi
+done
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SRC")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR"
 
-# If pip-installed (console_scripts), the wrapper is in some bin dir
-# and PROJECT_ROOT is wrong. Try to find the real project root.
+# If pip-installed (console_scripts), the wrapper is in a site-packages bin dir.
+# Walk up looking for src/server.py to find the real project root.
 if [ ! -f "$PROJECT_ROOT/src/server.py" ]; then
-  # Walk up looking for src/server.py
   DIR="$SCRIPT_DIR"
   while [ "$DIR" != "/" ]; do
     if [ -f "$DIR/src/server.py" ]; then
